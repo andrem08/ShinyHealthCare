@@ -14,7 +14,6 @@ tagList(
                # carregar os gráficos
                wellPanel(
                  h3('Filtro'),
-
                 selectInput('selectFile', h5('Selecione o arquivo: '),
                             choices = c('Diabetes', 'Mortalidade Covid', 'Câncer',
                                         'Dados', 'Empregos', 'Avaliação ao Cliente', 'Frequência de Enjoo em Movimento')),
@@ -38,6 +37,7 @@ tagList(
                mainPanel(
                  tabsetPanel(type = 'tabs', id = 'plotPanel',
                              tabPanel('Tabela de Contingência', tableOutput('tabCont')),
+                             tabPanel('Nova Tabela de Contingência', tableOutput('newTabCont')),
                              tabPanel(title = uiOutput('firstPlot', ), plotOutput('plotOut',  width = "100%")),
                              tabPanel(title = uiOutput('secondPlot'), plotOutput('plotOut2',  width = "100%"))
 
@@ -62,10 +62,14 @@ tagList(
                             2 , 20, 5, 1),
                 sliderInput('sliderLinFis', h5('Número de Linhas'),
                             2 , 20, 5, 1),
-                 numericInput('confLevel', h5('Nivel de confiança ( Para tabelas de contingência 2x2 )'), value = 0.95, min = 0.0000001, max = 0.9999999, step = 0.05),
+                 numericInput('confLevel', h5('Nivel de confiança ( Para tabelas de contingência 2x2 )'),
+                              value = 0.95, min = 0.0000001, max = 0.9999999, step = 0.05),
+                 selectInput('selectRR', h5('Hipótese de risco relativo: '),
+                            choices = c('Maior do que 1', 'Igual a 1',
+                  'Menor do que 1')),
                 actionButton('buttonFis', 'Carregar Dados', icon("sync"),
-    style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
-               ),
+                             style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                 ),
               wellPanel(
                    span(h5('Estatísticas: '),
                         verbatimTextOutput('textEstatFis')
@@ -76,7 +80,8 @@ tagList(
             column(9,
                    tabsetPanel(type = 'tabs', id = 'plotPanel2',
                                #Outputs para as mensagens contendo as estatísticas do teste Qui-Quadrado
-                               tabPanel('Tabela de Contingência', tableOutput('tabContFis'))
+                               tabPanel('Tabela de Contingência', tableOutput('tabContFis')),
+                               tabPanel('Nova Tabela de Contingência', tableOutput('newTabContFis'))
                                )
                    )
             )

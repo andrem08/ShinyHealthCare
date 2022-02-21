@@ -1,3 +1,7 @@
+
+#Ao selecionar um dos files, esta função carrega os dados
+# na variavel global dados, atualiza os sliders input e
+# atualiza os nomes dos paineis de gráfico
 observeSelectQuiSq <- function (input, output, session){
 
     #Arquivos que o usuario escolhe utilizando o switch case
@@ -31,16 +35,21 @@ observeSelectQuiSq <- function (input, output, session){
 
     #Constroi a tabela de contingência
     output$tabCont <- renderTable(dados, rownames = TRUE, height = 300, width = 600)
+    output$newTabCont <- renderTable(dados, rownames = TRUE, height = 300, width = 600)
 
     # Ao modificar o select no teste do Qui-Quadrado,
     # mostra a mesma opção do select no teste de fisher
     # menos quando for 'mortalidade Covid'
-    if(input$selectFile != 'Mortalidade Covid')
+    if(input$selectFile != 'Mortalidade Covid' & input$selectFile != 'Dados')
       updateSelectInput(session = session, inputId = 'selectFileFis',
                         selected = input$selectFile)
 
   }
 
+#Recebe os dados já carregados com os arquivos, pega
+# um numero, determinado pelo usuario, de linhas e colunas
+# cada uma aleatoriamente escolhida. Em seguida, constroi
+# o teste Qui-Quadrado e por fim constroi cada um dos gráficos
 observeButtonQuiSq <- function (input, output, session){
     dadosApp <- dados
 
@@ -51,6 +60,8 @@ observeButtonQuiSq <- function (input, output, session){
     #Atualiza novamente os tab panels
     output$firstPlot <- renderText((rownames(dadosApp)[1]))
     output$secondPlot <- renderText((rownames(dadosApp)[2]))
+    #Atualiza com a nova tabela de contingência
+    output$newTabCont <- renderTable(dadosApp, rownames = TRUE, height = 300, width = 600)
 
     #Calcula o teste Qui-Quadrado
     #Output imprime o valor de p, a quantidade de graus de liberdade e
@@ -66,13 +77,14 @@ observeButtonQuiSq <- function (input, output, session){
     rownames(data) <- c('Esperado', 'Observado')
     data2 <- data <- t(t(data))
 
-    #Dados observados e esperados de cada uma das tabelas
+    #Insere os dados observados e os dados esperados nos dados
+    # dos gráficos.
     data[1, ] <- as.integer(quiSq$expected[1,])
     data[2, ] <- as.integer(quiSq$observed[1, ])
     data2[1, ] <- as.integer(quiSq$expected[2,])
     data2[2, ] <- as.integer(quiSq$observed[2, ])
 
-    #Construção dos graficos das primeiras duas linhas1
+    #Construção dos graficos de observações e expectativas
     output$plotOut <- renderPlot(barplot(data, legend = rownames(data), col = c('steelblue', 'orange'),  beside = TRUE, main = rownames(dadosApp)[1], las = 1), height = 500, width = 1000)
     output$plotOut2 <- renderPlot(barplot(data2, legend = rownames(data2), col = c('steelblue', 'orange'),beside = TRUE, main = rownames(dadosApp)[2], las = 1), height = 500, width = 1000)
-  }
+}
