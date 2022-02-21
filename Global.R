@@ -1,2 +1,2 @@
-dados <- 1
-dadosFisher <- 1
+dados <- 0
+dadosFisher <- 0
