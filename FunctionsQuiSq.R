@@ -1,0 +1,78 @@
+observeSelectQuiSq <- function (input, output, session){
+
+    #Arquivos que o usuario escolhe utilizando o switch case
+    #Adicionar os arquivos aqui!!
+    file <- switch(input$selectFile, 'Câncer' = 'Dados/CancerDeMamaMortalidade.xlsx',
+                   'Mortalidade Covid' = 'Dados/MortalidadeCovid.xlsx',
+                    'Diabetes' = 'Dados/Diabetes.xlsx',
+                    'Dados' = 'Dados/Dados.xlsx',
+                    'Empregos' = 'Dados/Empregos.xlsx',
+                    'Avaliação ao Cliente' = 'Dados/AvaliacaoAoCliente.xlsx',
+                    'Frequência de Enjoo em Movimento' = 'Dados/FrequenciaEnjoo.xlsx')
+
+    #Carregar o arquivo selecionado, nomear as linhas e
+    # remover a primeira coluna, que contem descrições
+    dados <<- read.xlsx(file, 1)
+    rownames(dados) <<- dados[, 1]
+    dados <<- dados[-1]
+
+    #Ordena linhas e colunas em ordem alfabetica
+    dados <<- dados[order(rownames(dados)),]
+    dados <<- dados[order(colnames(dados))]
+
+    #Atualizar os comprimentos dos sliders conforme o tamanho da tabela
+    # modificando o número máximo de linhas e colunas
+    updateSliderInput(session = session, inputId = 'sliderCol' ,max = ncol(dados ), value = ncol(dados ))
+    updateSliderInput(session = session, inputId = 'sliderLin' ,max = nrow(dados), value = nrow(dados))
+
+    #Atualiza o titulo dos paineis
+    output$firstPlot <- renderText((rownames(dados)[1]))
+    output$secondPlot <- renderText((rownames(dados)[2]))
+
+    #Constroi a tabela de contingência
+    output$tabCont <- renderTable(dados, rownames = TRUE, height = 300, width = 600)
+
+    # Ao modificar o select no teste do Qui-Quadrado,
+    # mostra a mesma opção do select no teste de fisher
+    # menos quando for 'mortalidade Covid'
+    if(input$selectFile != 'Mortalidade Covid')
+      updateSelectInput(session = session, inputId = 'selectFileFis',
+                        selected = input$selectFile)
+
+  }
+
+observeButtonQuiSq <- function (input, output, session){
+    dadosApp <- dados
+
+    #Remover aleatoriamente linhas e colunas conforme os sliders dado pelo usuário
+    if(input$sliderCol < ncol(dadosApp)) dadosApp <- dadosApp[-sample(seq_len(ncol(dadosApp)), ncol(dadosApp) - input$sliderCol, replace = F)]
+    if(input$sliderLin < nrow(dadosApp)) dadosApp <- dadosApp[-sample(seq_len(nrow(dadosApp)), nrow(dadosApp) - input$sliderLin, replace = F), ]
+
+    #Atualiza novamente os tab panels
+    output$firstPlot <- renderText((rownames(dadosApp)[1]))
+    output$secondPlot <- renderText((rownames(dadosApp)[2]))
+
+    #Calcula o teste Qui-Quadrado
+    #Output imprime o valor de p, a quantidade de graus de liberdade e
+    # o valor de Qui-Quadrado
+    quiSq <- chisq.test(dadosApp, simulate.p.value = FALSE)
+    output$textEstat <- renderPrint(cat('Valor de p: ', quiSq$p.value, '\n',
+                              quiSq$parameter, ' graus de liberdade.\n',
+                              'Valor de Qui-Quadrado: ',quiSq$statistic , sep = ''))
+
+    #Data para os gráficos
+    data <- data.frame(matrix(ncol = ncol(dadosApp), nrow = 2))
+    names(data) <- names(dadosApp)
+    rownames(data) <- c('Esperado', 'Observado')
+    data2 <- data <- t(t(data))
+
+    #Dados observados e esperados de cada uma das tabelas
+    data[1, ] <- as.integer(quiSq$expected[1,])
+    data[2, ] <- as.integer(quiSq$observed[1, ])
+    data2[1, ] <- as.integer(quiSq$expected[2,])
+    data2[2, ] <- as.integer(quiSq$observed[2, ])
+
+    #Construção dos graficos das primeiras duas linhas1
+    output$plotOut <- renderPlot(barplot(data, legend = rownames(data), col = c('steelblue', 'orange'),  beside = TRUE, main = rownames(dadosApp)[1], las = 1), height = 500, width = 1000)
+    output$plotOut2 <- renderPlot(barplot(data2, legend = rownames(data2), col = c('steelblue', 'orange'),beside = TRUE, main = rownames(dadosApp)[2], las = 1), height = 500, width = 1000)
+  }

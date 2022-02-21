@@ -1,0 +1,85 @@
+library(shinythemes)
+
+tagList(
+  navbarPage(
+    theme = shinytheme('yeti'),
+    h5('Testes de Significância'),
+
+    #Inputs e Outputs para os testes de Qui-Quadrado
+    tabPanel(
+      h5('Teste Qui-Quadrado de Pearson'),
+      fluidRow(
+        column(3,
+               #Inputs para selecionar o arquivo, definir os graus de liberdade e
+               # carregar os gráficos
+               wellPanel(
+                 h3('Filtro'),
+
+                selectInput('selectFile', h5('Selecione o arquivo: '),
+                            choices = c('Diabetes', 'Mortalidade Covid', 'Câncer',
+                                        'Dados', 'Empregos', 'Avaliação ao Cliente', 'Frequência de Enjoo em Movimento')),
+                sliderInput('sliderCol', h5('Número de Colunas'),
+                            2 , 20, 5, 1),
+                sliderInput('sliderLin', h5('Número de Linhas'),
+                            2 , 20, 5, 1),
+                actionButton('button', 'Carregar Dados', icon("sync"),
+                             style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+               ),
+               #Outputs para as mensagens contendo as estatísticas do teste Qui-Quadrado
+               wellPanel(
+                   span(h5('Estatísticas: '),
+                        verbatimTextOutput('textEstat')
+                   )
+               )
+        ),
+
+        #Dois gráficos para as duas primeiras linhas
+        column(9,
+               mainPanel(
+                 tabsetPanel(type = 'tabs', id = 'plotPanel',
+                             tabPanel('Tabela de Contingência', tableOutput('tabCont')),
+                             tabPanel(title = uiOutput('firstPlot', ), plotOutput('plotOut',  width = "100%")),
+                             tabPanel(title = uiOutput('secondPlot'), plotOutput('plotOut2',  width = "100%"))
+
+                 )
+               )
+        )
+      )
+    ),
+    #Inputs e Outputs para os testes exatos de Fisher / Fisher-Freeman-Halton
+    tabPanel(
+      h5('Teste exato de Fisher'),
+          fluidRow(
+            column(3,
+               #Inputs para selecionar o arquivo, definir os graus de liberdade e
+               # carregar os gráficos
+               wellPanel(
+                 h3('Filtro'),
+                selectInput('selectFileFis', h5('Selecione o arquivo: '),
+                            choices = c('Diabetes', 'Câncer',
+                                        'Empregos', 'Avaliação ao Cliente', 'Frequência de Enjoo em Movimento')),
+                sliderInput('sliderColFis', h5('Número de Colunas'),
+                            2 , 20, 5, 1),
+                sliderInput('sliderLinFis', h5('Número de Linhas'),
+                            2 , 20, 5, 1),
+                 numericInput('confLevel', h5('Nivel de confiança ( Para tabelas de contingência 2x2 )'), value = 0.95, min = 0.0000001, max = 0.9999999, step = 0.05),
+                actionButton('buttonFis', 'Carregar Dados', icon("sync"),
+    style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+               ),
+              wellPanel(
+                   span(h5('Estatísticas: '),
+                        verbatimTextOutput('textEstatFis')
+                   )
+               )
+            ),
+            #Dois gráficos para as duas primeiras linhas
+            column(9,
+                   tabsetPanel(type = 'tabs', id = 'plotPanel2',
+                               #Outputs para as mensagens contendo as estatísticas do teste Qui-Quadrado
+                               tabPanel('Tabela de Contingência', tableOutput('tabContFis'))
+                               )
+                   )
+            )
+    )
+  )
+)
