@@ -6,7 +6,7 @@ observeSelectFisher <- function (input, output, session){
 
     #Arquivos que o usuario escolhe
     #Adicionar os arquivos aqui!!
-    file <- switch(input$selectFileFis, 'Câncer' = 'Dados/CancerMortalidade.xlsx',
+    file <- switch(input$selectFileFis, 'Câncer' = 'Dados/CancerDeMamaMortalidade.xlsx',
                     'Diabetes' = 'Dados/Diabetes.xlsx',
                     'Empregos' = 'Dados/Empregos.xlsx',
                     'Avaliação ao Cliente' = 'Dados/AvaliacaoAoCliente.xlsx',

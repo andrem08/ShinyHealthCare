@@ -6,13 +6,13 @@ observeSelectQuiSq <- function (input, output, session){
 
     #Arquivos que o usuario escolhe utilizando o switch case
     #Adicionar os arquivos aqui!!
-    file <- switch(input$selectFile, 'Câncer' = 'Dados/CancerMortalidade.xlsx',
+    file <- switch(input$selectFile, 'Câncer' = 'Dados/CancerDeMamaMortalidade.xlsx',
                    'Mortalidade Covid' = 'Dados/MortalidadeCovid.xlsx',
-                   'Diabetes' = 'Dados/Diabetes.xlsx',
-                   'Dados' = 'Dados/Dados.xlsx',
-                   'Empregos' = 'Dados/Empregos.xlsx',
-                   'Avaliação ao Cliente' = 'Dados/AvaliacaoAoCliente.xlsx',
-                   'Frequência de Enjoo em Movimento' = 'Dados/FrequenciaEnjoo.xlsx')
+                    'Diabetes' = 'Dados/Diabetes.xlsx',
+                    'Dados' = 'Dados/Dados.xlsx',
+                    'Empregos' = 'Dados/Empregos.xlsx',
+                    'Avaliação ao Cliente' = 'Dados/AvaliacaoAoCliente.xlsx',
+                    'Frequência de Enjoo em Movimento' = 'Dados/FrequenciaEnjoo.xlsx')
 
     #Carregar o arquivo selecionado, nomear as linhas e
     # remover a primeira coluna, que contem descrições
