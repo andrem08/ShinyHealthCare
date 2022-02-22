@@ -1,0 +1,11 @@
+name: myshinyapp
+title:
+username:
+account: mpandremiyazawa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5697248
+bundleId: 5602594
+url: https://andremiyazawa.shinyapps.io/myshinyapp/
+when: 1645460625.22773
+lastSyncTime: 1645460625.22773

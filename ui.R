@@ -1,10 +1,9 @@
 library(shinythemes)
 
-tagList(
+shinyUI(fluidPage(
+  theme = shinytheme('yeti'),
+  titlePanel(h5('Testes de Significância')),
   navbarPage(
-    theme = shinytheme('yeti'),
-    h5('Testes de Significância'),
-
     #Inputs e Outputs para os testes de Qui-Quadrado
     tabPanel(
       h5('Teste Qui-Quadrado de Pearson'),
@@ -16,7 +15,7 @@ tagList(
                  h3('Filtro'),
                 selectInput('selectFile', h5('Selecione o arquivo: '),
                             choices = c('Diabetes', 'Mortalidade Covid', 'Câncer',
-                                        'Dados', 'Empregos', 'Avaliação ao Cliente', 'Frequência de Enjoo em Movimento')),
+                                        'ServerFunctions/Dados', 'Empregos', 'Avaliação ao Cliente', 'Frequência de Enjoo em Movimento')),
                 sliderInput('sliderCol', h5('Número de Colunas'),
                             2 , 20, 5, 1),
                 sliderInput('sliderLin', h5('Número de Linhas'),
@@ -87,4 +86,5 @@ tagList(
             )
     )
   )
+)
 )

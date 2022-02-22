@@ -2,8 +2,8 @@
 library(shiny)
 library(openxlsx)
 library(ggplot2)
-source('FunctionsQuiSq.R')
-source('FunctionsFisher.R')
+source('ServerFunctions/FunctionsQuiSq.R')
+source('ServerFunctions/FunctionsFisher.R')
 
 options(encoding = 'UTF-8')
 
@@ -23,4 +23,6 @@ function (input, output, session){
   # Construir estatisticas para o teste de Fisher
   # Observando o botão
   observeEvent(input$buttonFis, observeButtonFisher(input, output, session))
+
+
 }
