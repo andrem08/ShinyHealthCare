@@ -8,6 +8,7 @@ source('FunctionsFisher.R')
 options(encoding = 'UTF-8')
 
 function (input, output, session){
+
   #Seleção para teste Qui-Quadrado
   #Carregar um dos arquicos selecionados
   observeEvent(input$selectFile, observeSelectQuiSq(input, output, session))
