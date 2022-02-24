@@ -20,10 +20,6 @@ observeSelectQuiSq <- function (input, output, session){
     rownames(dados) <<- dados[, 1]
     dados <<- dados[-1]
 
-    #Ordena linhas e colunas em ordem alfabetica
-    dados <<- dados[order(rownames(dados)),]
-    dados <<- dados[order(colnames(dados))]
-
     #Atualizar os comprimentos dos sliders conforme o tamanho da tabela
     # modificando o número máximo de linhas e colunas
     updateSliderInput(session = session, inputId = 'sliderCol' ,max = ncol(dados ), value = ncol(dados ))

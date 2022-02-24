@@ -18,10 +18,6 @@ observeSelectFisher <- function (input, output, session){
     rownames(dadosFisher) <<- dadosFisher[, 1]
     dadosFisher <<- dadosFisher[-1]
 
-    #Ordena linhas e colunas em ordem alfabetica
-    dadosFisher <<- dadosFisher[order(rownames(dadosFisher)),]
-    dadosFisher <<- dadosFisher[order(colnames(dadosFisher))]
-
     #Atualizar os comprimentos dos sliders conforme o tamanho da tabela
     updateSliderInput(session = session, inputId = 'sliderColFis' ,max = ncol(dadosFisher ), value = ncol(dadosFisher ))
     updateSliderInput(session = session, inputId = 'sliderLinFis' ,max = nrow(dadosFisher), value = nrow(dadosFisher))
