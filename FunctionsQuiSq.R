@@ -4,21 +4,21 @@
 # atualiza os nomes dos paineis de gráfico
 observeSelectQuiSq <- function (input, output, session){
 
-    #Arquivos que o usuario escolhe utilizando o switch case
-    #Adicionar os arquivos aqui!!
-    file <- switch(input$selectFile, 'Câncer' = 'Dados/CancerDeMamaMortalidade.xlsx',
-                   'Mortalidade Covid' = 'Dados/MortalidadeCovid.xlsx',
-                    'Diabetes' = 'Dados/Diabetes.xlsx',
-                    'Dados' = 'Dados/Dados.xlsx',
-                    'Empregos' = 'Dados/Empregos.xlsx',
-                    'Avaliação ao Cliente' = 'Dados/AvaliacaoAoCliente.xlsx',
-                    'Frequência de Enjoo em Movimento' = 'Dados/FrequenciaEnjoo.xlsx')
-
+    #Os arquivos que o usuario baixar
+    # Caso ele nao tenha nenhum, o programa vai enviar um de exemplo
     #Carregar o arquivo selecionado, nomear as linhas e
     # remover a primeira coluna, que contem descrições
-    dados <<- read.xlsx(file, 1)
-    rownames(dados) <<- dados[, 1]
-    dados <<- dados[-1]
+    file <- input$file
+    if(is.null(file)){
+        dados <<- read.xlsx('Dados/FrequenciaEnjoo.xlsx', 1)
+        rownames(dados) <<- dados[, 1]
+        dados <<- dados[-1]
+    }
+    else{
+        dados <<- read.xlsx(file$datapath, 1)
+        rownames(dados) <<- dados[, 1]
+        dados <<- dados[-1]
+    }
 
     #Atualizar os comprimentos dos sliders conforme o tamanho da tabela
     # modificando o número máximo de linhas e colunas
@@ -30,15 +30,9 @@ observeSelectQuiSq <- function (input, output, session){
     output$secondPlot <- renderText((rownames(dados)[2]))
 
     #Constroi a tabela de contingência
-    output$tabCont <- renderTable(dados, rownames = TRUE, height = 300, width = 600)
-    output$newTabCont <- renderTable(dados, rownames = TRUE, height = 300, width = 600)
+    output$tabCont <- DT::renderDT(datatable(dados, options = table_opt))
+    output$newTabCont <- DT::renderDT(datatable(dados, options = table_opt))
 
-    # Ao modificar o select no teste do Qui-Quadrado,
-    # mostra a mesma opção do select no teste de fisher
-    # menos quando for 'mortalidade Covid'
-    if(input$selectFile != 'Mortalidade Covid' & input$selectFile != 'Dados')
-      updateSelectInput(session = session, inputId = 'selectFileFis',
-                        selected = input$selectFile)
 
   }
 
@@ -57,7 +51,7 @@ observeButtonQuiSq <- function (input, output, session){
     output$firstPlot <- renderText((rownames(dadosApp)[1]))
     output$secondPlot <- renderText((rownames(dadosApp)[2]))
     #Atualiza com a nova tabela de contingência
-    output$newTabCont <- renderTable(dadosApp, rownames = TRUE, height = 300, width = 600)
+    output$newTabCont <- DT::renderDT(datatable(dadosApp, options = table_opt))
 
     #Calcula o teste Qui-Quadrado
     #Output imprime o valor de p, a quantidade de graus de liberdade e
