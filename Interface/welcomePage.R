@@ -1,20 +1,34 @@
+
 welcome_page <<- function (){
 
-  # ns <- NS(id)
+  setwd('C:/Users/andre/PycharmProjects/TesteDeHipotese')
 
-  tabPanel(h5(icon('home')),
+  tabPanel(title = 'Home', icon = icon('home'),tags$style(
+      "li a {
+        font-size: 18px;
+        font-weight: 100;
+      }
+    "
+    ),
   fluidRow(
+    column(width = 9,
+      p(strong('Shiny Health Care,'), style = 'color: black; font-size: xxx-large; font-family: "Baskerville Old Face"'),
+           br(),br()
+    ),
+    column( width = 12,
+        imageOutput("myImage")
+    ),
     column(
-      p(strong('Seja bem Vindo,'), style = 'color: black; font-size: xx-large; font-family: "Old English Text MT"'),
-      br(),
-      p(strong('Testes de significância: '), br(), 'Testes de significância, testes de hipótese ou teste estatístico a é um processo estatístico objetivo
-      que auxilia o pesquisador a utilizá-lo para se tirar uma conclusão, tomar uma decisão do tipo sim ou não sobre uma ou mais populações previamente definidas,
-      a partir de uma ou mais amostras oriundas dessas populações.', br(), br(), 'Em um teste de significância devemos construir duas hipóteses uma hipótese nula H0
-       (há uma associação estatisticamente significativa entre as variáveis) e uma hipótese alternativa Há (não há evidências suficientes para concluir que
-       as variáveis estão associadas) .'
-
+      br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),
+      p(strong(h4('Welcome,')), br()),
+      p(strong('The Shiny Health Care application was created to help you take care of your health more easily,
+        organize everything you need to know about your daily health, easy to understand, and everything in one app.',
+        br(), br(),
+        'The application measure important statistics about your daily life, including some statistics,
+        infographics, your sleep schedule and more. The more informed you are about your health, the more empowered
+        you are to take action. Everything for free.')
         ,style= stylePanel),
-      width = 9,
+      width = 12,
     )
   ))
 }

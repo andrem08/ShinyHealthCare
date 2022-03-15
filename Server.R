@@ -1,21 +1,14 @@
-source('FunctionsQuiSq.R')
-source('FunctionsFisher.R')
+source('Interface/VitaminsInterface.R')
+source('Interface/bmiInterface.R')
 
 server <- function (input, output, session){
+  output$myImage <- renderImage({
+    list(src = 'Interface/www/Shiny_Health_Care_Image.png', width = '700px', height = '700px', style="display: block; margin-left: auto; margin-right: auto;")
+  }, deleteFile = FALSE)
 
-  #Seleção para teste Qui-Quadrado
-  #Carregar um dos arquicos selecionados
-  observeEvent(input$file, observeSelectQuiSq(input, output, session))
 
-  #Construir estatisticas para o teste Qui-Quadrado
-  #Observando o botão
-  observeEvent(input$button, observeButtonQuiSq(input, output, session))
+  #Observe if you select a vitamin
+  observeEvent(input$selectVit, observeSelectizeVit(input, output, session))
 
-  #Seleção para teste de Fisher
-  #Carregar um dos arquicos selecionados
-  observeEvent(input$fileF, observeSelectFisher(input, output, session))
-
-  # Construir estatisticas para o teste de Fisher
-  # Observando o botão
-  observeEvent(input$buttonFis, observeButtonFisher(input, output, session))
+  observeEvent(input$BMI_button, bmiFunction(input, output, session))
 }

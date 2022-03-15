@@ -1,3 +1,6 @@
+#Diretorio
+setwd('C:/Users/andre/PycharmProjects/TesteDeHipotese/')
+
 #Bibliotecas
 library(DT)
 library(shiny)
@@ -6,6 +9,9 @@ library(ggplot2)
 library(shinyjs)
 library(shinythemes)
 library(shinyWidgets)
+library(shinyBS)
+library(knitr)
+library(elliptic)
 
 #Opçõa de codificação
 options(encoding = 'UTF-8')
@@ -13,7 +19,8 @@ options(encoding = 'UTF-8')
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx
 dados <<- 0
-dadosFisher <<- 0
+plot1 <<- 0
+plot2 <<- 0
 
 #Estilos e peronalizações
 table_opt <<- list(
@@ -24,4 +31,5 @@ table_opt <<- list(
 )
 primary_color <<- '#2c3e50'
 secondary_color <<- '#ecf0f1'
-stylePanel <<- "color:black;background-color: #ecf0f1; padding:15px;border-radius:5px;font-size: 15px"
+stylePanel <<- "color:black;background-color: #ecf0f1; padding:15px;border-radius:5px;font-size: 18px"
+smallStylePanel <<- "color:black;background-color: #ecf0f1; padding:6px;border-radius:5px;font-size: 18px"

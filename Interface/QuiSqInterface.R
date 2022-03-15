@@ -9,12 +9,15 @@ quiSqInterface <- function (){
              wellPanel(
                 h3('Filtro'),
                 fileInput('file', 'Escolha um xlsx file', accept = '.xlsx', buttonLabel = "Escolha!", placeholder = "Nenhum arquivo escolhido"),
+                p('Selecione as dimensões do seu arquivo: '),
                 sliderInput('sliderCol', h5('Número de Colunas'),
                           2 , 20, 5, 1),
                 sliderInput('sliderLin', h5('Número de Linhas'),
                           2 , 20, 5, 1),
                 actionButton('button', 'Carregar Dados', icon("sync"),
                              style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                br(),p('Baixe as estatístcas em pdf: '),
+                downloadButton('dwd', 'Baixar')
              ),
       ),
       #Dois gráficos para as duas primeiras linhas

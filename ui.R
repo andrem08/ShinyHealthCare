@@ -1,24 +1,23 @@
-
-
 source('Interface/welcomePage.R')
 source('Interface/HowToUse.R')
-source('Interface/QuiSqInterface.R')
-source('Interface/FisherInterface.R')
+source('Interface/VitaminsInterface.R')
+source('Interface/bmiInterface.R')
+source('Interface/SleepScheduleInterface.R')
+source('Interface/Heartbeat.R')
 
-shinyUI(fluidPage(
+
+ui <<- fluidPage(
   theme = shinytheme('flatly'),
   setBackgroundColor(
   ),
-  titlePanel(h2('Testes de Significância')),
-
-  navbarPage(h5('MyShinyStatistics'),
+  navbarPage(('MyShinyStatistics'),
              #Apresentação do aplicativo, as estatísticas e sobre o autor
              welcome_page(),
-             #Explicação de como utilizar o aplicativo
+             vitaminsInterface(),
+             bmiInterface(),
+             sleepFunction(),
+             heartbeatInterface(),
+             #Informaçoes e ajuda
              howToUse(),
-             #Inputs e Outputs para os testes de Qui-Quadrado
-             quiSqInterface(),
-             #Inputs e Outputs para os testes exatos de Fisher / Fisher-Freeman-Halton
-             fisherInterface()
           )
-))
+)
