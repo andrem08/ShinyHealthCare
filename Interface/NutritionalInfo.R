@@ -66,20 +66,20 @@ vit_DF <- getVit()
 nutritional_DF <- getFoodNutrients()
 
 observeSelectizeVit <- function (input, output, session){
-  if(input$selectVit == 'All'){
-    output$tableVit <- renderDataTable(
+  if(input$select_vit == 'All'){
+    output$table_vit <- renderDataTable(
       DT::datatable(vit_DF)
     )
   }
   else{
-    output$tableVit <- renderDataTable(
+    output$table_vit <- renderDataTable(
       DT::datatable(
-        vit_DF [which( vit_DF$Name == input$select_nutritional_food ), ]
+        vit_DF [which( vit_DF$Name == input$select_vit ), ]
       )
     )
   }
 }
-  observeButtonNutritionalFood <- function (input, output, session){
+  observeSelectNutritionalFood <- function (input, output, session){
     output$nutritional_food_table <- renderDataTable(nutritional_DF [[which(nutritional_DF[[1]] == input$select_nutritional_food) + 1]])
 }
 vitaminsInterface <- function (){
@@ -104,13 +104,13 @@ vitaminsInterface <- function (){
       column(3,
              wellPanel(
                  h3(strong('Filter: ')),
-                 selectizeInput('selectVit', h5('Select a vitamin: '),
+                 selectizeInput('select_vit', h5('Select a vitamin: '),
                                     choices = c('All', vit_DF[['Name']])),
                                     multiple = TRUE,
              )
       ),
       column(9,
-             dataTableOutput('tableVit')
+             dataTableOutput('table_vit')
       )
     )
   ),

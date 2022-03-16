@@ -1,5 +1,5 @@
-source('Interface/welcomePage.R')
-source('Interface/HowToUse.R')
+source('Interface/HomePage.R')
+source('Interface/InfoPage.R')
 source('Interface/NutritionalInfo.R')
 source('Interface/BmiInterface.R')
 source('Interface/SleepScheduleInterface.R')

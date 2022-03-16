@@ -13,6 +13,7 @@ library(elliptic)
 
 #Opçõa de codificação
 options(encoding = 'UTF-8')
+options(warn=-1)
 
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx

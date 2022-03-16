@@ -8,9 +8,9 @@ server <- function (input, output, session){
 
 
   #Observe if you select a vitamin
-  observeEvent(input$selectVit, observeSelectizeVit(input, output, session))
+  observeEvent(input$select_vit, observeSelectizeVit(input, output, session))
 
   observeEvent(input$BMI_button, bmiFunction(input, output, session))
 
-  observeEvent(input$select_nutritional_food , observeButtonNutritionalFood(input, output, session))
+  observeEvent(input$select_nutritional_food , observeSelectNutritionalFood(input, output, session))
 }
