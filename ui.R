@@ -1,7 +1,7 @@
 source('Interface/welcomePage.R')
 source('Interface/HowToUse.R')
-source('Interface/VitaminsInterface.R')
-source('Interface/bmiInterface.R')
+source('Interface/NutritionalInfo.R')
+source('Interface/BmiInterface.R')
 source('Interface/SleepScheduleInterface.R')
 source('Interface/Heartbeat.R')
 

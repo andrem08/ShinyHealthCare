@@ -1,5 +1,3 @@
-#Diretorio
-setwd('C:/Users/andre/PycharmProjects/TesteDeHipotese/')
 
 #Bibliotecas
 library(DT)

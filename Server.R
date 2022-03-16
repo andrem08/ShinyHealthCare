@@ -1,5 +1,5 @@
-source('Interface/VitaminsInterface.R')
-source('Interface/bmiInterface.R')
+source('Interface/NutritionalInfo.R')
+source('Interface/BmiInterface.R')
 
 server <- function (input, output, session){
   output$myImage <- renderImage({
@@ -11,4 +11,6 @@ server <- function (input, output, session){
   observeEvent(input$selectVit, observeSelectizeVit(input, output, session))
 
   observeEvent(input$BMI_button, bmiFunction(input, output, session))
+
+  observeEvent(input$select_nutritional_food , observeButtonNutritionalFood(input, output, session))
 }
