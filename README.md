@@ -1,5 +1,5 @@
-# TesteDeHipotese
-Teste Qui-Quadrado e Teste de Fisher
+# Shiny Health Care
+Mostra estatísticas de necessidades médicas, e realiza alguns cálculos
 
 Para utilizar o programa, baixe os arquivos e 
 de runApp().
