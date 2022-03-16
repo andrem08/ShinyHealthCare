@@ -87,7 +87,7 @@ vitaminsInterface <- function (){
     title = 'Nutritional Info',
     icon = icon('pills'),
   tabPanel(
-    ('Vitamins'),
+    title = ('Vitamins'),
     fluidRow(
       column(12,
              p(h3(strong('Vitamins'))),
