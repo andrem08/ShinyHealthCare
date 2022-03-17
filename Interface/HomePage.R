@@ -1,8 +1,5 @@
 
 welcome_page <<- function (){
-
-  setwd('C:/Users/andre/PycharmProjects/TesteDeHipotese')
-
   tabPanel(title = 'Home', icon = icon('home'),tags$style(
       "li a {
         font-size: 18px;

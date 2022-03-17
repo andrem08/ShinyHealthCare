@@ -1,11 +1,16 @@
 library(rvest)
 library(dplyr)
+library(rmarkdown)
 
+#Essa função vai pegar as tabelas do site jumk.de
+# e vai retornar uma data frame mais organizada
 getVit <- function (){
-    linkVitaminas <- 'https://jumk.de/bmi/vitamin-table.php'
-    page <- read_html(linkVitaminas)
+  linkVitaminas <- 'https://jumk.de/bmi/vitamin-table.php'
+  linkVitaminas <- url(linkVitaminas, 'rb')
+  page <- read_html(linkVitaminas)
 
-    vitaminas <- page %>% html_nodes(".vit")  %>% html_text()
+  vitaminas <- page %>% html_nodes(".vit")  %>% html_text()
+  close(linkVitaminas)
 
     vitTable <- data.frame(matrix(ncol = 8, nrow = 17))
     index <- 1
@@ -26,8 +31,13 @@ getVit <- function (){
 # ao usuario
 getFoodNutrients <- function (){
   link <- 'https://en.wikipedia.org/wiki/Table_of_food_nutrients'
+  link <- url(link, 'rb')
+
   page <- read_html(link)
   nutritional_table <- page %>% html_nodes('table') %>% html_table()
+
+  close(link)
+
   tableNames <- list()
   for (i in seq(length(nutritional_table))){
     #Pega uma das tabelas da tabela nutricional
@@ -62,6 +72,7 @@ getFoodNutrients <- function (){
 +   return(c(list(tableNames), nutritional_table))
 }
 
+#guarda as tabelas
 vit_DF <- getVit()
 nutritional_DF <- getFoodNutrients()
 
@@ -79,9 +90,34 @@ observeSelectizeVit <- function (input, output, session){
     )
   }
 }
-  observeSelectNutritionalFood <- function (input, output, session){
-    output$nutritional_food_table <- renderDataTable(nutritional_DF [[which(nutritional_DF[[1]] == input$select_nutritional_food) + 1]])
+
+#Download Buttons
+downloadVitamins <- function (input, output, session){
+  output$download_vit <- downloadHandler(
+    filename = function() {
+      paste('my-report', sep = '.', switch(
+        'PDF', PDF = 'pdf', HTML = 'html', Word = 'docx'
+      ))
+    },
+
+    content = function(file) {
+      src <- normalizePath('report.Rmd')
+
+      # temporarily switch to the temp dir, in case you do not have write
+      # permission to the current working directory
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      file.copy(src, 'report.Rmd', overwrite = TRUE)
+
+      out <- render('report.Rmd', switch(
+        'PDF',
+        PDF = pdf_document(), HTML = html_document(), Word = word_document()
+      ))
+      file.rename(out, file)
+    }
+  )
 }
+
 vitaminsInterface <- function (){
   navbarMenu(
     title = 'Nutritional Info',
@@ -107,6 +143,9 @@ vitaminsInterface <- function (){
                  selectizeInput('select_vit', h5('Select a vitamin: '),
                                     choices = c('All', vit_DF[['Name']])),
                                     multiple = TRUE,
+             ),
+             wellPanel(
+               downloadButton('download_vit', 'Download the table:')
              )
       ),
       column(9,

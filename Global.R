@@ -10,6 +10,7 @@ library(shinyWidgets)
 library(shinyBS)
 library(knitr)
 library(elliptic)
+library(knitr)
 
 #Opçõa de codificação
 options(encoding = 'UTF-8')
