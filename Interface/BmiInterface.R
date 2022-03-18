@@ -19,26 +19,34 @@ bmiInterface <- function (){
        ),
      fluidRow(
        column(4,
-              h3(strong('Filter: ')),
-              fluidRow(
-                column(5,
-                       selectInput('type_height_BMI', 'Choose the metric system', choices = c('Centimeters', 'Inches', 'Feet'))
-                ),
-                column(5,
-                       numericInput('height_BMI', 'Insert your height', value = 0)
-                ), style = smallStylePanel),
-              br(),
-              fluidRow(
-                column(5,
-                       selectInput('type_weight_BMI', 'Choose the metric system', choices = c('Kilograms', 'Lbs'))
-                ),
-                column(5,
-                       numericInput('weight_BMI', 'Insert your weight', value = 0), br()
-                ), style = smallStylePanel),
-              actionButton('BMI_button', 'Calculate your BMI')
+              wellPanel(
+                 h3(strong('Filter: ')),
+                 fluidRow(
+                   column(5,
+                          selectInput('type_height_BMI', 'Choose the metric system:', choices = c('Centimeters', 'Inches', 'Feet'))
+                   ),
+                   column(5,
+                          numericInput('height_BMI', 'Insert your height:', value = 0)
+                   ), style = smallStylePanel),
+                 br(),
+                 fluidRow(
+                   column(5,
+                          selectInput('type_weight_BMI', 'Choose the metric system:', choices = c('Kilograms', 'Lbs'))
+                   ),
+                   column(5,
+                          numericInput('weight_BMI', 'Insert your weight:', value = 0), br()
+                   ), style = smallStylePanel),
+                 actionButton('BMI_button', 'Calculate your BMI')
+              ),
+              wellPanel(
+                  h4(strong('Downloads: ')),
+                  downloadButton('download_bmi', 'Download the table:')
+               ),
        ),
        column(4,
-              verbatimTextOutput('BMI_results')
+              wellPanel(
+                uiOutput('BMI_results')
+              )
        ),
        column(4,
               dataTableOutput('BMI_table')
@@ -69,7 +77,73 @@ bmiFunction <- function (input, output, session){
   interval_bmi <- c('Less than 16', '16 - 17', '17 - 18.5', '18.5 - 25', '25 - 30', '30 - 35', '35 - 40', 'More than 40')
   labs_bmi <- c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
   bmi_table <- data.frame(bmi = interval_bmi, classification = labs_bmi)
-  output$BMI_results <- renderText({paste('Your BMI is', bmi)})
+  if(weight <= 0 || height <= 0){
+    output$BMI_results <- renderUI({p(h3('Error, wrong inputs.'))})
 
-  output$BMI_table <- renderDataTable(bmi_table)
+    output$BMI_table <- DT::renderDataTable(
+      bmi_table
+    )
+  }
+  else{
+    results <- case_when(
+        bmi < 16 ~ 'Indicating you are very underweight for adults of your height.
+        Weighing too little can contribute to a weakened immune system,
+        fragile bones and feeling tired.Talk with your healthcare
+        provider to determine an appropriate diet.',
+
+        bmi >= 16 & bmi < 17 ~ 'Indicating you are underweight for adults of your height.
+         Talk with your healthcare provider to determine possible causes of underweight and
+         if you need to gain weight.',
+
+        bmi >= 17 & bmi < 18.5 ~ 'Indicating you are a little underweight for adults of your height.
+         Talk with your healthcare provider to determine possible causes of underweight and if
+         you need to gain weight.',
+
+        bmi >= 18.5 & bmi < 25 ~ 'Indicating your weight is normal for adults of your height.
+         Maintaining a healthy weight may reduce the risk of chronic diseases associated with
+        overweight and obesity.',
+
+        bmi >= 25 & bmi < 30 ~ 'You are a little overweight for adults of your height.
+        Consuming fewer calories, making healthy food choices, exercising
+        more and controlling your weight can help reduce body mass.',
+
+        bmi >= 30 & bmi < 35 ~ 'You are overweight for adults of your height.
+        Consuming fewer calories, making healthy food choices, exercising
+        more and controlling your weight can help reduce body mass.',
+
+        bmi >= 35 & bmi < 40 ~ 'You are obese for adults of your height,
+        Class II obesity can be very harmful to health.
+        Try to avoid gaining additional weight. Talk with your healthcare
+        provider to determine appropriate ways to lose weight.',
+
+        bmi >= 40 ~ 'You are morbid obese for adults of your height.
+        Class III obesity can contribute to the development of several
+        serious health conditions, such as Type 2 diabetes and heart disease.
+        The good news is that class III obesity is manageable and treatable.
+        Talk with your healthcare provider to determine appropriate ways to lose weight.'
+      )
+    output$BMI_results <- renderUI({
+      tagList(
+        uiOutput('BMI_results_text1'),
+        uiOutput('BMI_results_text2')
+      )
+    }
+    )
+    output$BMI_results_text1 <- renderUI({p(h3('Your BMI is:', bmi))})
+    output$BMI_results_text2 <- renderUI({p(results)})
+
+    output$BMI_table <- DT::renderDataTable(
+      bmi_table,
+      selection = list(selected = case_when(
+        bmi < 16 ~ 1,
+        bmi >= 16 & bmi < 17 ~ 2,
+        bmi >= 17 & bmi < 18.5 ~ 3,
+        bmi >= 18.5 & bmi < 25 ~ 4,
+        bmi >= 25 & bmi < 30 ~ 5,
+        bmi >= 30 & bmi < 35 ~ 6,
+        bmi >= 35 & bmi < 40 ~ 7,
+        bmi >= 40 ~ 8
+      ),target="row")
+  )
+  }
 }

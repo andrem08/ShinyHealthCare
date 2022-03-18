@@ -5,15 +5,15 @@ howToUse <- function (){
     tabPanel(
       title = h5('How to use'),
       fluidRow(
-         column(
-           p(strong(h3('Manual on how to use the application.')),
-             br(),br(),
-             strong(h3('Index:')),
-             br(),'Vitamins',
-             br(),'Calculate your BMI',
-             br(),'Sleep data'
-             , style = stylePanel),
-           width = 12
+         column(12,
+                h3(strong('Manual on how to use the application.')),
+                   wellPanel(
+                      h3(strong('Index:')),
+                      br(),h3('Nutritional Info'),
+                      br(),h3('Calculate your BMI'),
+                      br(),h3('Sleep data'),
+                      br(),h3('Heartbeat Frequency')
+                )
          )
       )
     ),

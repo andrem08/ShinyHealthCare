@@ -23,9 +23,11 @@ heartbeatInterface <- function (){
                          numericInput('heart_rate_age', 'Digit your age', value = 25, min = 0),
                          numericInput('heart_rate_numeric', 'Digit the result of your heart frequency per minute', value = 80, min = 0),
                          actionButton('heart_rate_numeric_button', 'Calculate'),
-                         fileInput('heart_rate_file', 'Insert a file of your heart frequencies per minute'),
-                         actionButton('heart_rate_file_button', 'Calculate')
-                      )
+                      ),
+                      wellPanel(
+                         h4(strong('Downloads: ')),
+                         downloadButton('download_heart_beat', 'Download the table:')
+                      ),
                   )
              )
     )
