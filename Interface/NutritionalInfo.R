@@ -145,6 +145,7 @@ vitaminsInterface <- function (){
                                     multiple = TRUE,
              ),
              wellPanel(
+               h4(strong('Downloads: ')),
                downloadButton('download_vit', 'Download the table:')
              )
       ),
@@ -171,8 +172,11 @@ vitaminsInterface <- function (){
                selectInput('select_nutritional_food', 'Select the type of your food:',
                            choices = nutritional_DF[[1]]),
                h3(strong('Download the table in pdf: ')),
-               downloadButton('download_nutritional_food', label = "Download")
-               )
+               ),
+               wellPanel(
+                 h4(strong('Downloads: ')),
+                 downloadButton('download_nut', 'Download the table:')
+               ),
         ),
         column(9,
                dataTableOutput('nutritional_food_table')

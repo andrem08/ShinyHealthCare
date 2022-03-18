@@ -32,6 +32,69 @@ observeSelectSleepWho <- function (input, output, session){
   }
 }
 
+observeSleepButton <- function (input, output, session){
+  if(is.null(input$sleep_file) || nrow(read.xlsx(input$sleep_file$datapath)) <= 0){
+    output$user_sleep_statistics <- renderUI({
+      p(h4('Error on the file!'))
+    })
+    return()
+  }else{
+    monthTable <- data.frame(read.xlsx(input$sleep_file$datapath), 1)
+  }
+
+  if(typeof(monthTable[[1]]) != 'double'){
+    output$user_sleep_statistics <- renderUI({
+      p(h4('Error on the file!'))
+    })
+    return()
+  }
+
+  selected_age <- which(sleep_table$Ages == input$sleep_select_age)
+  ideal_hours <- switch(
+    selected_age,
+    c(14, 17),
+    c(12, 16),
+    c(11, 14),
+    c(10, 13),
+    c(9, 12),
+    c(8, 10),
+    c(7, 10),
+    c(7, 9),
+    c(7, 8),
+  )
+  betw <- ideal_hours[2] - ideal_hours[1]
+
+  graph <- data.frame(Days = seq(nrow(monthTable[1])), Hours = c(8, 7,6, 8, 7, 6))
+
+  output$user_sleep_graph <- renderPlot(
+
+    ggplot()+
+      geom_rect(aes(ymin = ideal_hours[1] + 2*betw, ymax = 24, xmax = Inf, xmin = -Inf, fill = '1. Too much sleep'), alpha = .2) +
+      geom_rect(aes(ymin = ideal_hours[1] + betw, ymax = ideal_hours[1] + 2*betw, xmax = Inf, xmin = -Inf, fill = '2. Oversleep'), alpha = .2) +
+      geom_rect(aes(ymin = ideal_hours[1], ymax = ideal_hours[1] + betw, xmax = Inf, xmin = -Inf, fill = '3. Perfect sleep range'), alpha = .2) +
+      geom_rect(aes(ymin = ideal_hours[1] - betw, ymax = ideal_hours[1], xmax = Inf, xmin = -Inf, fill = '4. Low sleep time'), alpha = .2) +
+      geom_rect(aes(ymin = -Inf, ymax = ideal_hours[1] - betw, xmax = Inf, xmin = -Inf, fill = '5. Lack of sleep'), alpha = .2) +
+      geom_line(data = subset(graph), aes(x = Days, y = Hours, group = 1), size = 2)+
+      geom_point(data = subset(graph), aes(x = Days, y = Hours, group = 1), size = 4) +
+      scale_fill_brewer(palette = 'Dark2', name = 'Sleep classification: ')+
+    theme_bw()
+  )
+  output$user_sleep_dt <- DT::renderDataTable(graph)
+
+  output$user_sleep_statistics <- renderUI({
+    tagList(
+      wellPanel(
+        uiOutput('sleep_statistics_1'),
+        uiOutput('sleep_statistics_2'),
+        uiOutput('sleep_statistics_3')
+      )
+    )
+  })
+  output$sleep_statistics_1 <- renderUI({p(h3('The Mean of your sleep schedule is:', mean(graph$Hours)))})
+  output$sleep_statistics_2 <- renderUI({p(h3('The Variance of your sleep schedule is:', var(graph$Hours)))})
+  output$sleep_statistics_3 <- renderUI({p(h3('The Standard Deviation of your sleep schedule is:', format(round(sqrt(var(graph$Hours)), 3), nsmall = 3)))})
+}
+
 sleepFunction <- function (){
   navbarMenu(
     title = ('Sleep data'),
@@ -46,19 +109,31 @@ sleepFunction <- function (){
           width = 9
         )),
       fluidRow(
-        column(3,
+        column(4,
                wellPanel(
-                 h3('Filter'),
+                 h3(strong('Filter:')),
                  selectInput('sleep_select_age', 'Select your age:', choices = sleep_table[['Ages']]),
-                 selectInput('sleep_choose_file', 'Select the type of your file: ', choices = c('.csv', '.xlsx')),
-                 fileInput('sleep_file', 'Insert your file: '),
-                 actionButton('sleep_button_file', 'Calculate: ')
+                 fileInput('sleep_file', 'Insert your .xlsx file: '),
+                 actionButton('sleep_button_file', 'Calculate: '),
+               ),
+               wellPanel(
+                  h4(strong('Add and remove days of your .xlsx file:')), p(br()),
+                 numericInput('sleep_numeric_add', 'Add the sleep time of the new day.', value = 7),
+                 actionButton('sleep_button_add', 'Add: '), p(strong('Remove last day of your .xlsx file.:'),br()),
+                 actionButton('sleep_button_remove', 'Remove: '),
+               ),
+               wellPanel(
+                 h4(strong('Donwloads: ')),p(br()),
+                 downloadButton('sleep_download_xlsx', 'Download your new .xlsx file.'),p(br()),
+                 downloadButton('sleep_download_pdf', 'Download all the tables and the statistics:')
                )
         ),
-        column(9,
+        column(8,
                tabsetPanel(type = 'tabs', id = 'plotPanel',
-                           tabPanel('Your sleep table', DTOutput('user_sleep_dt')),
-                           tabPanel('Your sleep graph', DTOutput('user_sleep_graph'))
+                           tabPanel('Statistics:', uiOutput('user_sleep_statistics')),
+                           tabPanel('Your sleep table:', DTOutput('user_sleep_dt')),
+                           tabPanel('Your sleep graph:', plotOutput('user_sleep_graph')),
+
                )
         )
       )
@@ -79,7 +154,11 @@ sleepFunction <- function (){
                          selectInput('sleep_select_age_who', 'Select your age:', choices = c('All', sleep_table[['Ages']])),
                          numericInput('sleep_number', 'Insert your sleep time in hours:', value = 7),
                          actionButton('sleep_button_number', 'Calculate: '),
-                      )
+                      ),
+                      wellPanel(
+                         h4(strong('Downloads: ')),
+                         downloadButton('download_sleep_who', 'Download the table:')
+                      ),
                   ),
                column(9,
                       h3(strong('Sleep table according to World Health Organization: ')),

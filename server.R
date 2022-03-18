@@ -1,5 +1,6 @@
 source('Interface/NutritionalInfo.R')
 source('Interface/BmiInterface.R')
+source('Interface/SleepScheduleInterface.R')
 
 function (input, output, session){
 
@@ -10,6 +11,8 @@ function (input, output, session){
   output$myImage <- renderImage({
     list(src = 'Interface/www/Shiny_Health_Care_Image.png', width = '700px', height = '700px', style="display: block; margin-left: auto; margin-right: auto;")
   }, deleteFile = FALSE)
+
+  observeEvent(input$sleep_button_file, observeSleepButton(input, output, session))
 
   #Observe if you select a vitamin
   observeEvent(input$select_vit, observeSelectizeVit(input, output, session))
