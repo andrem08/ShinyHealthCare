@@ -1,3 +1,25 @@
+getHeartRateTable <- function (){
+  link <- 'https://www.topendsports.com/testing/heart-rate-resting-chart.htm'
+  link <- url(link, 'rb')
+  page <- read_html(link)
+
+  table <- page %>% html_nodes('table') %>% html_table()
+  description <- page %>% html_nodes('h1 + p') %>% html_text()
+
+  close(link)
+
+  table <- data.frame(table)
+  title_female <- table[[9]][1]
+  title_male <- table[[1]][1]
+
+  table <- table[-1, ]
+  rownames(table) <- table[[1]]
+  table <- table[-c(1, 8)]
+
+  colnames(table) <- table[1,]
+
+}
+
 heartbeatInterface <- function (){
     tabPanel(title = 'Heartbeat frequency',
          fluidRow(
@@ -21,6 +43,7 @@ heartbeatInterface <- function (){
                       wellPanel(
                          h3(strong('Filter:')),
                          numericInput('heart_rate_age', 'Digit your age', value = 25, min = 0),
+                         selectInput('heart_rate_gender', 'Choose your gender', choices = c('Female', 'Male')),
                          numericInput('heart_rate_numeric', 'Digit the result of your heart frequency per minute', value = 80, min = 0),
                          actionButton('heart_rate_numeric_button', 'Calculate'),
                       ),
@@ -28,7 +51,10 @@ heartbeatInterface <- function (){
                          h4(strong('Downloads: ')),
                          downloadButton('download_heart_beat', 'Download the table:')
                       ),
-                  )
+                  ),
+               column(9,
+
+               )
              )
     )
 }

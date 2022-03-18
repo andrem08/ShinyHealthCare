@@ -14,6 +14,11 @@ function (input, output, session){
 
   observeEvent(input$sleep_button_file, observeSleepButton(input, output, session))
 
+  observeEvent(input$sleep_button_add, addHour(input, output, session))
+  observeEvent(input$sleep_button_remove, removeHour(input, output, session))
+  observeEvent(input$create_sleep_file, newFile(input, output, session))
+
+  observeEvent(input$sleep_file, correctFile(input, output ))
   #Observe if you select a vitamin
   observeEvent(input$select_vit, observeSelectizeVit(input, output, session))
 

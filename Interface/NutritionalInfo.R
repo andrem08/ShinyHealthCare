@@ -146,7 +146,7 @@ vitaminsInterface <- function (){
              ),
              wellPanel(
                h4(strong('Downloads: ')),
-               downloadButton('download_vit', 'Download the table:')
+               downloadButton('download_vit', 'Download the table:', icon = icon('download'))
              )
       ),
       column(9,

@@ -22,20 +22,20 @@ bmiInterface <- function (){
               wellPanel(
                  h3(strong('Filter: ')),
                  fluidRow(
-                   column(5,
-                          selectInput('type_height_BMI', 'Choose the metric system:', choices = c('Centimeters', 'Inches', 'Feet'))
+                   column(6,
+                           numericInput('height_BMI', 'Insert your height: ', value = 0)
                    ),
-                   column(5,
-                          numericInput('height_BMI', 'Insert your height:', value = 0)
-                   ), style = smallStylePanel),
+                   column(6,
+                          selectInput('type_height_BMI', '', choices = c('Centimeters', 'Inches', 'Feet'))
+                   )),
                  br(),
                  fluidRow(
                    column(5,
-                          selectInput('type_weight_BMI', 'Choose the metric system:', choices = c('Kilograms', 'Lbs'))
+                          numericInput('weight_BMI', 'Insert your weight:', value = 0)
                    ),
                    column(5,
-                          numericInput('weight_BMI', 'Insert your weight:', value = 0), br()
-                   ), style = smallStylePanel),
+                          selectInput('type_weight_BMI', '', choices = c('Kilograms', 'Lbs')), br()
+                   )),
                  actionButton('BMI_button', 'Calculate your BMI')
               ),
               wellPanel(

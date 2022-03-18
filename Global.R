@@ -18,9 +18,7 @@ options(warn=-1)
 
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx
-dados <<- 0
-plot1 <<- 0
-plot2 <<- 0
+month_table <<- NULL
 
 #Estilos e peronalizações
 table_opt <<- list(
