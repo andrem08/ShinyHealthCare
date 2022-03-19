@@ -1,4 +1,3 @@
-
 welcome_page <<- function (){
   tabPanel(title = 'Home', icon = icon('home'),tags$style(
       "li a {
@@ -7,9 +6,9 @@ welcome_page <<- function (){
       }
     "
     ),
+  headerPanel(p(strong('Shiny Health Care,'), style = 'font-size: xxx-large; font-family: "Baskerville Old Face"')),
   fluidRow(
     column(width = 9,
-      p(strong('Shiny Health Care,'), style = 'color: black; font-size: xxx-large; font-family: "Baskerville Old Face"'),
            br(),br()
     ),
     column( width = 12,

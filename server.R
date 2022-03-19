@@ -1,6 +1,7 @@
 source('Interface/NutritionalInfo.R')
 source('Interface/BmiInterface.R')
 source('Interface/SleepScheduleInterface.R')
+source('Interface/Heartbeat.R')
 
 function (input, output, session){
 
@@ -28,5 +29,37 @@ function (input, output, session){
 
   observeEvent(input$sleep_select_age_who, observeSelectSleepWho(input, output, session))
 
-  downloadVitamins(input, output, session)
+  observeEvent(input$heart_rate_numeric_button, calculateHeartFrequency(input, output, session))
+
+  #Download statistics
+  # downloadVitamins(input, output, session)
+  # output$download_nut <- downloadToPdf('StatisticReports/nutritionalTableStatistics.Rmd')
+
+  downloadFiles <- function (path){
+    return (
+      content = function(file) {
+        src <- normalizePath(path)
+        # temporarily switch to the temp dir, in case you do not have write
+        # permission to the current working directory
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        file.copy(src, path, overwrite = TRUE)
+
+        out <- render(path, switch(
+          'PDF',
+          PDF = pdf_document(), HTML = html_document(), Word = word_document()
+        ))
+        file.rename(out, file)
+    }
+
+    )
+  }
+
+  output$download_vit <- downloadHandler(
+    filename = function() { paste('my-report', sep = '.', 'pdf')},
+    downloadFiles('reportVitamins.Rmd'))
+
+  output$download_nut <- downloadHandler(
+    filename = function() { paste('my-report', sep = '.', 'pdf')},
+    downloadFiles('nutritionalTableStatistics.Rmd'))
 }

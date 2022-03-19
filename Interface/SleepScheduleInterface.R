@@ -95,7 +95,7 @@ observeSleepButton <- function (input, output, session){
       scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ')+
     theme_bw()
   )
-    output$user_sleep_statistics <- renderUI({
+    output$user_sleep_statistics <- renderUI(
       tagList(
         wellPanel(
           uiOutput('sleep_statistics_1'),
@@ -103,7 +103,7 @@ observeSleepButton <- function (input, output, session){
           uiOutput('sleep_statistics_3')
         )
       )
-    })
+    )
     output$sleep_statistics_1 <- renderUI({p(h4('The Mean of your sleep schedule is:', format(round(mean(month_table$Hours), 3), nsmall = 3)))})
     output$sleep_statistics_2 <- renderUI({p(h4('The Variance of your sleep schedule is:', format(round(var(month_table$Hours), 3), nsmall = 3)))})
     output$sleep_statistics_3 <- renderUI({p(h4('The Standard Deviation of your sleep schedule is:', format(round(sqrt(var(month_table$Hours)), 3), nsmall = 3)))})
@@ -204,7 +204,7 @@ sleepFunction <- function (){
                )
         ),
         column(8,
-               tabsetPanel(type = 'tabs', id = 'plotPanel',
+               tabsetPanel(type = 'tabs', id = 'tabset_sleep_statistics',
                            tabPanel('Summary:', uiOutput('user_sleep_summary')),
                            tabPanel('Statistics:', uiOutput('user_sleep_statistics')),
                            tabPanel('Your sleep table:', DTOutput('user_sleep_dt')),

@@ -95,24 +95,18 @@ observeSelectizeVit <- function (input, output, session){
 downloadVitamins <- function (input, output, session){
   output$download_vit <- downloadHandler(
     filename = function() {
-      paste('my-report', sep = '.', switch(
-        'PDF', PDF = 'pdf', HTML = 'html', Word = 'docx'
-      ))
+      paste('my-report', sep = '.', 'pdf')
     },
 
     content = function(file) {
-      src <- normalizePath('report.Rmd')
+      src <- normalizePath('reportVita.Rmd')
 
-      # temporarily switch to the temp dir, in case you do not have write
-      # permission to the current working directory
+      #Constroi um arquivo temporario caso nao tenha permissao para modificação
       owd <- setwd(tempdir())
       on.exit(setwd(owd))
       file.copy(src, 'report.Rmd', overwrite = TRUE)
 
-      out <- render('report.Rmd', switch(
-        'PDF',
-        PDF = pdf_document(), HTML = html_document(), Word = word_document()
-      ))
+      out <- render('report.Rmd', pdf_document())
       file.rename(out, file)
     }
   )

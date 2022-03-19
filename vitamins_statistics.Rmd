@@ -2,5 +2,5 @@
 ```{r, echo=FALSE, warning = FALSE}
 library(knitr)
 
-knitr::kable(vit_DF[1:7], align = 'l', format = 'pipe')
+knitr::kable(vit_DF, align = 'l', format = 'pipe')
 ```

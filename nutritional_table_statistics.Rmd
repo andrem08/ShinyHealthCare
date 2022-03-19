@@ -1,0 +1,10 @@
+
+```{r}
+runtime: shiny
+```
+# Data table containing the Vitamins information:
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+nut_tab <- nutritional_DF [1]
+knitr::kable(nut_tab)
+```
