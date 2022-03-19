@@ -1,10 +1,6 @@
-
-```{r}
-runtime: shiny
-```
-# Data table containing the Vitamins information:
+# Data table containing the Nutritional table information:
 ```{r, echo=FALSE, warning = FALSE}
 library(knitr)
-nut_tab <- nutritional_DF [1]
-knitr::kable(nut_tab)
+p(input$select_nutritional_food)
+knitr::kable(user_nutritional_food())
 ```

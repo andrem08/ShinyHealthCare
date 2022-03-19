@@ -95,6 +95,11 @@ observeSleepButton <- function (input, output, session){
       scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ')+
     theme_bw()
   )
+    mean <- as.numeric(format(round(mean(month_table$Hours), 3), nsmall = 3))
+    var <- as.numeric(format(round(var(month_table$Hours), 3), nsmall = 3))
+    standartDev <- as.numeric(format(round(sqrt(var(month_table$Hours)), 3), nsmall = 3))
+    varCoef <- as.numeric(format(round(standartDev/mean, 3), nsmall = 3))
+
     output$user_sleep_statistics <- renderUI(
       tagList(
         wellPanel(
@@ -104,20 +109,25 @@ observeSleepButton <- function (input, output, session){
         )
       )
     )
-    output$sleep_statistics_1 <- renderUI({p(h4('The Mean of your sleep schedule is:', format(round(mean(month_table$Hours), 3), nsmall = 3)))})
-    output$sleep_statistics_2 <- renderUI({p(h4('The Variance of your sleep schedule is:', format(round(var(month_table$Hours), 3), nsmall = 3)))})
-    output$sleep_statistics_3 <- renderUI({p(h4('The Standard Deviation of your sleep schedule is:', format(round(sqrt(var(month_table$Hours)), 3), nsmall = 3)))})
+    output$sleep_statistics_1 <- renderUI(p(h4('The Mean of your sleep schedule is:', mean)))
+    output$sleep_statistics_2 <- renderUI(p(h4('The Standard Deviation of your sleep schedule is:', standartDev)))
+    output$sleep_statistics_3 <- renderUI(p(h4('The Variance Coeficient of your sleep schedule is:', varCoef, 'or', varCoef*100, '%')))
 
-    output$user_sleep_summary <- renderUI({
+    output$user_sleep_summary <- renderUI(
       tagList(
         wellPanel(
           uiOutput('sleep_summary_1'),
-          uiOutput('sleep_summary_2'),
-          uiOutput('sleep_summary_3'),
+          uiOutput('sleep_summary_2')
         )
       )
-    })
+    )
+    output$sleep_summary_1 <- renderUI(p(h3('Sleep consistency ( recommended with 4 or more data ): ', br())))
+    output$sleep_summary_2 <- renderUI(p(h3(case_when(
 
+            - 0.15 <= varCoef & varCoef <= 0.15 ~ 'You have been sleeping regularly.',
+            - 0.3 <= varCoef & varCoef <= 0.3 ~ 'You\re sleep schedule has been inconsistent.',
+            - 0.3 < varCoef | varCoef < 0.3 ~ 'You\re sleep schedule has been very inconsistent!'
+          ))))
   }
   else {
     output$user_sleep_graph <- renderPlot(ggplot())

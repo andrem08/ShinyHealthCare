@@ -50,10 +50,10 @@ calculateHeartFrequency <- function (input, output, session){
     str_replace_all('\\.', ' ')
   index <- case_when(
     input$heart_rate_age <= 25 ~ 1,
-    26 <= input$heart_rate_age & input$heart_rate_age <= 35 ~ 2,
-    36 <= input$heart_rate_age & input$heart_rate_age <= 45 ~ 3,
-    46 <= input$heart_rate_age & input$heart_rate_age <= 55 ~ 4,
-    56 <= input$heart_rate_age & input$heart_rate_age <= 65 ~ 5,
+    25 < input$heart_rate_age & input$heart_rate_age <= 35 ~ 2,
+    35 < input$heart_rate_age & input$heart_rate_age <= 45 ~ 3,
+    45 < input$heart_rate_age & input$heart_rate_age <= 55 ~ 4,
+    55 < input$heart_rate_age & input$heart_rate_age <= 65 ~ 5,
     65 < input$heart_rate_age  ~ 6
   )
 

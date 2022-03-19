@@ -1,15 +1,10 @@
-# TesteDeHipotese
-Teste Qui-Quadrado e Teste de Fisher
+# Shiny Health Care Application
+You can see the nutritional information,
+See your BMI, measure your sleep schedule
+and your pressure.
 
-Para utilizar o programa, baixe os arquivos e 
-de runApp().
+For utilize the program, just run 
+runApp() on the R console
 
-Caso de erro de encodificação digite:
+In case of spelling mistakes:
 options(encoding = 'UTF-8')
-
-Para colocar o aplicativo no shinyapps:
-
-rsconnect::setAccountInfo(name='andremiyazawa08', 
-    token='935D55239FF9752C1794CDD12D0D1964', 
-    secret='kAtS9JQcHwBBZoiebikQhYg+KIGlXyk+LAXuJ7TX'
-)

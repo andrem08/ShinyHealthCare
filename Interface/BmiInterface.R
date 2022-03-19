@@ -54,6 +54,11 @@ bmiInterface <- function (){
      )
   )
 }
+
+bmi_table <<- data.frame()
+bmi_text_1 <<- NULL
+bmi_text_2 <<- NULL
+
 bmiFunction <- function (input, output, session){
   #Primeiro transformar a altura em metros
   height <- switch(

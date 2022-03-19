@@ -1,4 +1,3 @@
-
 #Bibliotecas
 library(DT)
 library(shiny)
@@ -10,7 +9,6 @@ library(shinyWidgets)
 library(shinyBS)
 library(knitr)
 library(elliptic)
-library(knitr)
 
 #Opçõa de codificação
 options(encoding = 'UTF-8')
@@ -25,7 +23,8 @@ table_opt <<- list(
   initComplete = JS(
     "function(settings, json) {",
     "$(this.api().table().header()).css({'background-color': '#2c3e50', 'color': '#fff'});",
-    "}")
+    "}"
+  )
 )
 primary_color <<- '#2c3e50'
 secondary_color <<- '#ecf0f1'

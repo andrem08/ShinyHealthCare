@@ -5,7 +5,7 @@ source('Interface/Heartbeat.R')
 
 function (input, output, session){
 
-  regFormula <- reactive({
+  user_nutritional_food <- reactive({
     nutritional_DF [[which(nutritional_DF[[1]] == input$select_nutritional_food) + 1]]
   })
 
@@ -25,7 +25,7 @@ function (input, output, session){
 
   observeEvent(input$BMI_button, bmiFunction(input, output, session))
 
-  output$nutritional_food_table <- renderDataTable(regFormula())
+  output$nutritional_food_table <- renderDataTable(user_nutritional_food())
 
   observeEvent(input$sleep_select_age_who, observeSelectSleepWho(input, output, session))
 
@@ -57,9 +57,9 @@ function (input, output, session){
 
   output$download_vit <- downloadHandler(
     filename = function() { paste('my-report', sep = '.', 'pdf')},
-    downloadFiles('reportVitamins.Rmd'))
+    downloadFiles('vitamins_statistics.Rmd'))
 
   output$download_nut <- downloadHandler(
     filename = function() { paste('my-report', sep = '.', 'pdf')},
-    downloadFiles('nutritionalTableStatistics.Rmd'))
+    downloadFiles('nutritional_table_statistics.Rmd'))
 }
