@@ -9,16 +9,28 @@ getHeartRateTable <- function (){
   close(link)
 
   table <- data.frame(table)
-  title_female <- table[[9]][1]
-  title_male <- table[[1]][1]
+  titles <- c(table[[1]][1],table[[1]][1])
 
   table <- table[-1, ]
   rownames(table) <- table[[1]]
   table <- table[-c(1, 8)]
 
-  colnames(table) <- table[1,]
+  male_table <- table [][1:6]
+  female_table <- table [][7:12]
 
+  colnames(female_table) <- male_table[1,]
+  colnames(female_table) <- male_table[1,]
+
+  male_table <- male_table[-1,]
+  female_table <- female_table [-1,]
+
+  tables <- list(titles, description, male_table, female_table)
+  return(tables)
 }
+
+heart_tables <- getHeartRateTable()
+
+
 
 heartbeatInterface <- function (){
     tabPanel(title = 'Heartbeat frequency',

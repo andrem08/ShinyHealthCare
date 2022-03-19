@@ -92,7 +92,7 @@ observeSleepButton <- function (input, output, session){
       geom_rect(aes(ymin = -Inf, ymax = ideal_hours[1] - betw, xmax = Inf, xmin = -Inf, fill = '5. Lack of sleep'), alpha = .2) +
       geom_line(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 2)+
       geom_point(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 4) +
-      scale_fill_brewer(palette = 'Dark2', name = 'Sleep classification: ')+
+      scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ')+
     theme_bw()
   )
     output$user_sleep_statistics <- renderUI({
@@ -185,14 +185,20 @@ sleepFunction <- function (){
                  fileInput('sleep_file', 'Insert your .xlsx file: '),
                  actionButton('sleep_button_file', 'Calculate: '),
                ),
-               wellPanel(
-                  h4(strong('Add and remove days of your .xlsx file:')), p(br()),
-                 numericInput('sleep_numeric_add', 'Add the sleep time of the new day.', value = 7),
-                 actionButton('sleep_button_add', 'Add: '), p(strong('Remove last hour of your .xlsx file.:'),br()),
-                 actionButton('sleep_button_remove', 'Remove: '),
+               column(12, wellPanel(
+                      h4(strong('Add and remove days of your .xlsx file:')),
+               column(6,
+                   p(strong('Add the sleep time of the new day.:')),
+                   column(5, actionButton('sleep_button_add', 'Add: ')),
+                   column(7, numericInput('sleep_numeric_add', NULL, value = 7)),
                ),
+               column(6,
+                   p(strong('Remove last hour of your .xlsx file.:')),
+                   actionButton('sleep_button_remove', 'Remove: '), p(br()),
+               ), style = smallStylePanel
+               )),
                wellPanel(
-                 h4(strong('Donwloads: ')),p(br()),
+                 h4(strong('Donwloads: ')),
                  downloadButton('sleep_download_xlsx', 'Download the update .xlsx file.'),p(br()),
                  downloadButton('sleep_download_pdf', 'Download all the tables and the statistics:')
                )

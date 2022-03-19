@@ -29,5 +29,6 @@ table_opt <<- list(
 )
 primary_color <<- '#2c3e50'
 secondary_color <<- '#ecf0f1'
-stylePanel <<- "color:black;background-color: #ecf0f1; padding:15px;border-radius:5px;font-size: 18px"
-smallStylePanel <<- "color:black;background-color: #ecf0f1; padding:6px;border-radius:5px;font-size: 18px"
+stylePanel <<- "background-color: #ecf0f1; padding:15px;border-radius:5px;font-size: 18px"
+smallStylePanel <<- "background-color: #ecf0f1; padding:6px;border-radius:5px;"
+
