@@ -196,7 +196,9 @@ sleepFunction <- function (){
         column(4,
                wellPanel(
                  h3(strong('Filter:')),
-                 selectInput('sleep_select_age', 'Select your age:', choices = sleep_table[['Ages']]),
+                 selectInput('sleep_select_age', 'Select your age:',
+                             choices = sleep_table[['Ages']],
+                             selected = sleep_table[['Ages']][7]),
                  fileInput('sleep_file', 'Insert your .xlsx file: '),
                  actionButton('sleep_button_file', 'Calculate: '),
                ),
@@ -205,7 +207,7 @@ sleepFunction <- function (){
                column(6,
                    p(strong('Add the sleep time of the new day.:')),
                    column(5, actionButton('sleep_button_add', 'Add: ')),
-                   column(7, numericInput('sleep_numeric_add', NULL, value = 7)),
+                   column(7, numericInput('sleep_numeric_add', NULL, value = 8)),
                ),
                column(6,
                    p(strong('Remove last hour of your .xlsx file.:')),
@@ -243,7 +245,8 @@ sleepFunction <- function (){
                column(3,
                       wellPanel(
                          h3(strong('Filter:')),
-                         selectInput('sleep_select_age_who', 'Select your age:', choices = c('All', sleep_table[['Ages']]))
+                         selectInput('sleep_select_age_who', 'Select your age:',
+                                     choices = c('All', sleep_table[['Ages']])                          )
                       ),
                       wellPanel(
                          h4(strong('Downloads: ')),

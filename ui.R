@@ -1,9 +1,9 @@
-source('Interface/HomePage.R')
-source('Interface/InfoPage.R')
-source('Interface/NutritionalInfo.R')
-source('Interface/BmiInterface.R')
-source('Interface/SleepScheduleInterface.R')
-source('Interface/Heartbeat.R')
+source('RFunctions/HomePage.R')
+source('RFunctions/InfoPage.R')
+source('RFunctions/NutritionalInfo.R')
+source('RFunctions/BmiFunction.R')
+source('RFunctions/SleepScheduleFunction.R')
+source('RFunctions/Heartbeat.R')
 
 
 ui <<- fluidPage(

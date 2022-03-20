@@ -1,7 +1,7 @@
-source('Interface/NutritionalInfo.R')
-source('Interface/BmiInterface.R')
-source('Interface/SleepScheduleInterface.R')
-source('Interface/Heartbeat.R')
+source('RFunctions/NutritionalInfo.R')
+source('RFunctions/BmiFunction.R')
+source('RFunctions/SleepScheduleFunction.R')
+source('RFunctions/Heartbeat.R')
 
 library('writexl')
 
@@ -12,7 +12,7 @@ function (input, output, session){
   })
 
   output$myImage <- renderImage({
-    list(src = 'Interface/www/Shiny_Health_Care_Image.png', width = '700px', height = '700px', style="display: block; margin-left: auto; margin-right: auto;")
+    list(src = 'RFunctions/www/Shiny_Health_Care_Image.png', width = '700px', height = '700px', style="display: block; margin-left: auto; margin-right: auto;")
   }, deleteFile = FALSE)
 
   observeEvent(input$sleep_button_file, observeSleepButton(input, output, session))
