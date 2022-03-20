@@ -17,6 +17,7 @@ options(warn=-1)
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx
 month_table <<- NULL
+sleep_data_statistics <<- NULL
 
 #Estilos e peronalizações
 table_opt <<- list(

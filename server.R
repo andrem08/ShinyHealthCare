@@ -3,6 +3,8 @@ source('Interface/BmiInterface.R')
 source('Interface/SleepScheduleInterface.R')
 source('Interface/Heartbeat.R')
 
+library('writexl')
+
 function (input, output, session){
 
   user_nutritional_food <- reactive({
@@ -32,10 +34,7 @@ function (input, output, session){
   observeEvent(input$heart_rate_numeric_button, calculateHeartFrequency(input, output, session))
 
   #Download statistics
-  # downloadVitamins(input, output, session)
-  # output$download_nut <- downloadToPdf('StatisticReports/nutritionalTableStatistics.Rmd')
-
-  downloadFiles <- function (path){
+  downloadFilesPdf <- function (path){
     return (
       content = function(file) {
         src <- normalizePath(path)
@@ -56,10 +55,31 @@ function (input, output, session){
   }
 
   output$download_vit <- downloadHandler(
-    filename = function() { paste('my-report', sep = '.', 'pdf')},
-    downloadFiles('vitamins_statistics.Rmd'))
+    filename = function() { paste('vitamins_table', sep = '.', 'pdf')},
+    downloadFilesPdf('vitamins_statistics.Rmd'))
 
   output$download_nut <- downloadHandler(
-    filename = function() { paste('my-report', sep = '.', 'pdf')},
-    downloadFiles('nutritional_table_statistics.Rmd'))
+    filename = function() { paste('nutritional_table', sep = '.', 'pdf')},
+    downloadFilesPdf('nutritional_table_statistics.Rmd'))
+
+  output$sleep_download_pdf <- downloadHandler(
+    filename = function() { paste('sleep_schedule', sep = '.', 'pdf')},
+    downloadFilesPdf('your_sleep_schedule.rmd'))
+
+  output$download_sleep_who <- downloadHandler(
+    filename = function() { paste('sleep_schedule_who', sep = '.', 'pdf')},
+    downloadFilesPdf('sleep_schedule.rmd'))
+
+  output$download_heart_beat <- downloadHandler(
+    filename = function() { paste('heart_rate', sep = '.', 'pdf')},
+    downloadFilesPdf('heart_rate.rmd'))
+
+  output$download_bmi <- downloadHandler(
+    filename = function() { paste('bmi_statistics', sep = '.', 'pdf')},
+    downloadFilesPdf('bmi_statistics.rmd'))
+
+  output$sleep_download_xlsx <- downloadHandler(
+    filename = function() { "sleep_table.xlsx"},
+    content = function(file) {write_xlsx(month_table, path = file)}
+  )
 }

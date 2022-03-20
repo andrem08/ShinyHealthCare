@@ -1,8 +1,21 @@
-# Your BMI
-```{r}
+# Your BMI is:
+
+```{r, results = 'asis', echo=FALSE}
+if(!is.null(bmi_text)){
+  bmi_text[1]
+}
+```
+
+```{r, results = 'asis', echo=FALSE}
+if(!is.null(bmi_text)){
+  cat(bmi_text[2])
+}
 
 ```
-#BMI table
-```{r}
 
+# BMI table:
+
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+knitr::kable(bmi_table, align = 'l', format = 'pipe')
 ```

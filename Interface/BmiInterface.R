@@ -55,9 +55,11 @@ bmiInterface <- function (){
   )
 }
 
-bmi_table <<- data.frame()
-bmi_text_1 <<- NULL
-bmi_text_2 <<- NULL
+bmi_table <<- data.frame(
+  bmi = c('Less than 16', '16 - 17', '17 - 18.5', '18.5 - 25', '25 - 30', '30 - 35', '35 - 40', 'More than 40'),
+  classification = c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
+)
+bmi_text <<- NULL
 
 bmiFunction <- function (input, output, session){
   #Primeiro transformar a altura em metros
@@ -81,13 +83,11 @@ bmiFunction <- function (input, output, session){
   bmi <- bmi/10
   interval_bmi <- c('Less than 16', '16 - 17', '17 - 18.5', '18.5 - 25', '25 - 30', '30 - 35', '35 - 40', 'More than 40')
   labs_bmi <- c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
-  bmi_table <- data.frame(bmi = interval_bmi, classification = labs_bmi)
+  bmi_table <<- data.frame(bmi = interval_bmi, classification = labs_bmi)
   if(weight <= 0 || height <= 0){
     output$BMI_results <- renderUI({p(h3('Error, wrong inputs.'))})
 
-    output$BMI_table <- DT::renderDataTable(
-      bmi_table
-    )
+    output$BMI_table <- DT::renderDataTable(bmi_table)
   }
   else{
     results <- case_when(
@@ -132,8 +132,8 @@ bmiFunction <- function (input, output, session){
         uiOutput('BMI_results_text1'),
         uiOutput('BMI_results_text2')
       )
-    }
-    )
+    })
+    bmi_text <<- c(toString(bmi), results)
     output$BMI_results_text1 <- renderUI({p(h3('Your BMI is:', bmi))})
     output$BMI_results_text2 <- renderUI({p(results)})
 

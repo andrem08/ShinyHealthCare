@@ -82,9 +82,8 @@ observeSleepButton <- function (input, output, session){
 
   output$user_sleep_dt <- DT::renderDataTable(month_table)
   if(nrow(month_table) > 0){
-  output$user_sleep_graph <- renderPlot(
-
-    ggplot()+
+    user_sleep_plot <- (
+      ggplot()+
       geom_rect(aes(ymin = ideal_hours[1] + 2*betw, ymax = 24, xmax = Inf, xmin = -Inf, fill = '1. Too much sleep'), alpha = .2) +
       geom_rect(aes(ymin = ideal_hours[1] + betw, ymax = ideal_hours[1] + 2*betw, xmax = Inf, xmin = -Inf, fill = '2. Oversleep'), alpha = .2) +
       geom_rect(aes(ymin = ideal_hours[1], ymax = ideal_hours[1] + betw, xmax = Inf, xmin = -Inf, fill = '3. Perfect sleep range'), alpha = .2) +
@@ -93,8 +92,9 @@ observeSleepButton <- function (input, output, session){
       geom_line(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 2)+
       geom_point(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 4) +
       scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ')+
-    theme_bw()
-  )
+      theme_bw()
+    )
+    output$user_sleep_graph <- renderPlot(user_sleep_plot)
     mean <- as.numeric(format(round(mean(month_table$Hours), 3), nsmall = 3))
     var <- as.numeric(format(round(var(month_table$Hours), 3), nsmall = 3))
     standartDev <- as.numeric(format(round(sqrt(var(month_table$Hours)), 3), nsmall = 3))
@@ -111,7 +111,7 @@ observeSleepButton <- function (input, output, session){
     )
     output$sleep_statistics_1 <- renderUI(p(h4('The Mean of your sleep schedule is:', mean)))
     output$sleep_statistics_2 <- renderUI(p(h4('The Standard Deviation of your sleep schedule is:', standartDev)))
-    output$sleep_statistics_3 <- renderUI(p(h4('The Variance Coeficient of your sleep schedule is:', varCoef, 'or', varCoef*100, '%')))
+    output$sleep_statistics_3 <- renderUI(p(h4('The Variance Coefficient of your sleep schedule is:', varCoef, 'or', varCoef*100, '%')))
 
     output$user_sleep_summary <- renderUI(
       tagList(
@@ -121,13 +121,18 @@ observeSleepButton <- function (input, output, session){
         )
       )
     )
-    output$sleep_summary_1 <- renderUI(p(h3('Sleep consistency ( recommended with 4 or more data ): ', br())))
-    output$sleep_summary_2 <- renderUI(p(h3(case_when(
+    output$sleep_summary_1 <- renderUI(p(h3(case_when(
+      nrow(month_table) < 4 ~ 'Sleep consistency: ( recommended with 4 or more data )',
+      nrow(month_table) >= 4 ~ 'Sleep consistency: ',
+
+    ), br())))
+    output$sleep_summary_2 <- renderUI(p(h4(case_when(
 
             - 0.15 <= varCoef & varCoef <= 0.15 ~ 'You have been sleeping regularly.',
             - 0.3 <= varCoef & varCoef <= 0.3 ~ 'You\re sleep schedule has been inconsistent.',
             - 0.3 < varCoef | varCoef < 0.3 ~ 'You\re sleep schedule has been very inconsistent!'
           ))))
+    sleep_data_statistics <<- list(c(mean, standartDev, varCoef), month_table, user_sleep_plot)
   }
   else {
     output$user_sleep_graph <- renderPlot(ggplot())
@@ -238,9 +243,7 @@ sleepFunction <- function (){
                column(3,
                       wellPanel(
                          h3(strong('Filter:')),
-                         selectInput('sleep_select_age_who', 'Select your age:', choices = c('All', sleep_table[['Ages']])),
-                         numericInput('sleep_number', 'Insert your sleep time in hours:', value = 7),
-                         actionButton('sleep_button_number', 'Calculate: '),
+                         selectInput('sleep_select_age_who', 'Select your age:', choices = c('All', sleep_table[['Ages']]))
                       ),
                       wellPanel(
                          h4(strong('Downloads: ')),

@@ -1,0 +1,38 @@
+# Data table containing your sleep schedule information and graphics:  
+
+The Mean of your sleep schedule is:
+```{r, echo=FALSE, warning = FALSE, results = 'asis'}
+
+library(knitr)
+if(!is.null(sleep_data_statistics)){
+  cat(paste0(sleep_data_statistics[[1]][1]), sep = '\\n')
+}
+```  
+
+The Standard Deviation of your sleep schedule is:
+```{r, echo=FALSE, warning = FALSE, results = 'asis'}
+library(knitr)
+if(!is.null(sleep_data_statistics)){
+  cat(paste0(sleep_data_statistics[[1]][2]))
+}
+```  
+
+The Variance Coefficient of your sleep schedule is:
+```{r, echo=FALSE, warning = FALSE, results = 'asis'}
+library(knitr)
+if(!is.null(sleep_data_statistics)){
+  cat(paste0(sleep_data_statistics[[1]][3]), sep = '\n')
+}
+```  
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+if(!is.null(sleep_data_statistics)){
+  knitr::kable(sleep_data_statistics[[2]], align = 'l', format = 'pipe')
+}
+```
+```{r plot, echo=FALSE, warning = FALSE}
+library(knitr)
+if(!is.null(sleep_data_statistics)){
+  plot(sleep_data_statistics[[3]], align = 'l', format = 'pipe')
+}
+```

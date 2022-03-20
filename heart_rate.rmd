@@ -1,0 +1,17 @@
+# Statistics and graphics about your and the resting Heart Rate:
+
+## Resting Heart Rate for women:
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+
+knitr::kable(heart_tables[[3]], align = 'l', format = 'pipe')
+```
+
+## Resting Heart Rate for men:
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+
+knitr::kable(heart_tables[[4]], align = 'l', format = 'pipe')
+```
+
+

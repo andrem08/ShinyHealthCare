@@ -1,0 +1,5 @@
+# Sleeping table according to the World Health Organization:
+```{r, echo=FALSE, warning = FALSE}
+library(knitr)
+knitr::kable(sleep_table)
+```
