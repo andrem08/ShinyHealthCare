@@ -34,7 +34,7 @@ observeSelectSleepWho <- function (input, output, session){
 }
 
 correctSleepFile <- function(input, output){
-  if(is.null(input$sleep_file) || is.null(read.xlsx(input$sleep_file)) || nrow(read.xlsx(input$sleep_file$datapath)) <= 0){
+  if(is.null(input$sleep_file) || nrow(read.xlsx(input$sleep_file$datapath)) <= 0){
     output$user_sleep_summary <- renderUI({
       p(h4('Error on the file!'))
     })

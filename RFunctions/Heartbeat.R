@@ -132,7 +132,7 @@ getHeartPATable <- function (){
 }
 
 correctHeartPAFile <- function(input, output){
-  if(is.null(input$heart_pa_file) || is.null(read.xlsx(input$heart_pa_file$datapath)) || nrow(read.xlsx(input$heart_pa_file$datapath)) != 6){
+  if(is.null(input$heart_pa_file) || nrow(read.xlsx(input$heart_pa_file$datapath)) != 6){
     output$user_heart_pa_summary <- renderUI({
       p(h4('Error on the file!'))
     })
