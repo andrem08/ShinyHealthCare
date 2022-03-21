@@ -10,6 +10,7 @@ ui <<- fluidPage(
   theme = shinytheme('flatly'),
   setBackgroundColor(
   ),
+
   navbarPage(('MyShinyStatistics'),
              #Apresentação do aplicativo, as estatísticas e sobre o autor
              welcome_page(),

@@ -1,3 +1,4 @@
+library(shinycssloaders)
 getSleepTable <- function (){
   link <- 'https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html'
   link <- url(link, 'rb')
@@ -32,8 +33,8 @@ observeSelectSleepWho <- function (input, output, session){
   }
 }
 
-correctFile <- function(input, output){
-  if(is.null(input$sleep_file) || nrow(read.xlsx(input$sleep_file$datapath)) <= 0){
+correctSleepFile <- function(input, output){
+  if(is.null(input$sleep_file) || is.null(read.xlsx(input$sleep_file)) || nrow(read.xlsx(input$sleep_file$datapath)) <= 0){
     output$user_sleep_summary <- renderUI({
       p(h4('Error on the file!'))
     })
@@ -61,7 +62,7 @@ correctFile <- function(input, output){
 observeSleepButton <- function (input, output, session){
 
   if(!is.data.frame(month_table)) {
-    if(!correctFile(input, output))
+    if(!correctSleepFile(input, output))
       return()
   }
 
@@ -91,10 +92,13 @@ observeSleepButton <- function (input, output, session){
       geom_rect(aes(ymin = -Inf, ymax = ideal_hours[1] - betw, xmax = Inf, xmin = -Inf, fill = '5. Lack of sleep'), alpha = .2) +
       geom_line(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 2)+
       geom_point(data = subset(month_table), aes(x = Days, y = Hours, group = 1), size = 4) +
-      scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ')+
+      scale_fill_brewer(palette = 'Set1', name = 'Sleep classification: ') +
+      labs('Sleep graph') +
       theme_bw()
     )
-    output$user_sleep_graph <- renderPlot(user_sleep_plot)
+    output$user_sleep_graph <- renderUI(shinycssloaders::withSpinner(plotOutput('user_sleep_graph_complete'), type = 6, color = '#0000ff'))
+
+    output$user_sleep_graph_complete <- renderPlot(user_sleep_plot)
     mean <- as.numeric(format(round(mean(month_table$Hours), 3), nsmall = 3))
     var <- as.numeric(format(round(var(month_table$Hours), 3), nsmall = 3))
     standartDev <- as.numeric(format(round(sqrt(var(month_table$Hours)), 3), nsmall = 3))
@@ -135,20 +139,21 @@ observeSleepButton <- function (input, output, session){
     sleep_data_statistics <<- list(c(mean, standartDev, varCoef), month_table, user_sleep_plot)
   }
   else {
-    output$user_sleep_graph <- renderPlot(ggplot())
+    output$user_sleep_graph <- renderUI(shinycssloaders::withSpinner(plotOutput('user_sleep_graph_complete'), type = 6, color = '#0000ff'))
+    output$user_sleep_graph_complete <- renderPlot(ggplot())
     output$user_sleep_statistics <- renderUI(p(h4('There\'s no elements on the table.')))
     output$user_sleep_summary <- renderUI(p(h4('There\'s no elements on the table.')))
   }
 }
 
-newFile <- function (input, output, session){
+newSleepFile <- function (input, output, session){
   month_table <<- data.frame()
   observeSleepButton(input, output, session)
 }
 
 addHour <- function (input, output, session){
   if(!is.data.frame(month_table)) {
-    if(!correctFile(input, output))
+    if(!correctSleepFile(input, output))
       return()
   }
   if(nrow(month_table) == 0){
@@ -165,7 +170,7 @@ addHour <- function (input, output, session){
 
 removeHour <- function (input, output, session){
   if(!is.data.frame(month_table)) {
-    if(!correctFile(input, output))
+    if(!correctSleepFile(input, output))
       return()
   }
 
@@ -178,22 +183,36 @@ sleepFunction <- function (){
     title = ('Sleep data'),
     icon = (icon('moon')),
     tabPanel(
-      h5('Your sleeping schedule'),
+      ('Your sleeping schedule'),
       fluidRow(
         column(
-          p('Here you can insert your sleeping schedule according to the image below, and then you can
-          see the data of your sleeping schedule and recomendations'
+
+          h3(strong('The importance of sleeping well ')),
+          p('Sleep is an essential function that allows your body and mind to recharge, leaving you refreshed and
+          alert when you wake up. Healthy sleep also helps the body remain healthy and stave off diseases.
+          Without enough sleep, the brain cannot function properly. This can impair your abilities to concentrate,
+          think clearly, and process memories.',
+          style = stylePanel),
+
+          h3(strong('Sleep Statistics ')),
+          p('Here you can insert your sleeping schedule if you have one, or, in case you don\'t have one,
+          click on the button create sleep spreadsheet. You can see if your sleep schedule is suitable for your age.', br(), br(),
+          'You can also see some statistics and the summary will tell if your sleep schedule is it regular or not.'
             , style = stylePanel),
+
           width = 9
         ),
            column(3,
+
                   wellPanel(
                     p('In case you don\'t have a exel spreadsheet: '),
                     actionButton('create_sleep_file', 'Create sleep spreadsheet: ')
-                  )
+                  , style = stylePanel)
+
            )),
       fluidRow(
         column(4,
+
                wellPanel(
                  h3(strong('Filter:')),
                  selectInput('sleep_select_age', 'Select your age:',
@@ -202,41 +221,78 @@ sleepFunction <- function (){
                  fileInput('sleep_file', 'Insert your .xlsx file: '),
                  actionButton('sleep_button_file', 'Calculate: '),
                ),
+
                column(12, wellPanel(
-                      h4(strong('Add and remove days of your .xlsx file:')),
+                 h4(strong('Add and remove days of your .xlsx file:')),
+
+                 column(6,
+                        p(strong('Add the sleep time of the new day.:')),
+                        column(5, actionButton('sleep_button_add', 'Add: ')),
+                        column(7, numericInput('sleep_numeric_add', NULL, value = 8, min = 0)),
+                 ),
+
                column(6,
-                   p(strong('Add the sleep time of the new day.:')),
-                   column(5, actionButton('sleep_button_add', 'Add: ')),
-                   column(7, numericInput('sleep_numeric_add', NULL, value = 8)),
-               ),
-               column(6,
-                   p(strong('Remove last hour of your .xlsx file.:')),
-                   actionButton('sleep_button_remove', 'Remove: '), p(br()),
+                      p(strong('Remove last hour of your .xlsx file.:')),
+                      actionButton('sleep_button_remove', 'Remove: '), p(br()),
                ), style = smallStylePanel
+
                )),
+
                wellPanel(
                  h4(strong('Donwloads: ')),
                  downloadButton('sleep_download_xlsx', 'Download the update .xlsx file.'),p(br()),
                  downloadButton('sleep_download_pdf', 'Download all the tables and the statistics:')
                )
+
         ),
         column(8,
                tabsetPanel(type = 'tabs', id = 'tabset_sleep_statistics',
-                           tabPanel('Summary:', uiOutput('user_sleep_summary')),
+                           tabPanel('Summary:',
+                                    (uiOutput('user_sleep_summary'))),
                            tabPanel('Statistics:', uiOutput('user_sleep_statistics')),
                            tabPanel('Your sleep table:', DTOutput('user_sleep_dt')),
-                           tabPanel('Your sleep graph:', plotOutput('user_sleep_graph')),
+                           tabPanel('Your sleep graph:',
+                                    uiOutput('user_sleep_graph')),
 
                )
         )
+      ),
+      fluidRow(
+        column(11,
+               h3(strong('Improve Your Sleep Today: Make Sleep a Priority!')),
+               p('Start by making sleep a priority in your schedule. This means budgeting for the hours
+               you need so that work or social activities don’t trade off with sleep. While cutting sleep
+               short may be tempting in the moment, it doesn’t pay off because sleep is essential to being
+               at your best both mentally and physically.',br(),br(),
+               'Improving your sleep hygiene, which includes your bedroom setting and sleep-related habits,
+               is an established way to get better rest. Examples of sleep hygiene improvements include:',br(),br(),
+               '- Sticking to the same sleep schedule every day, even on weekends.',br(),
+               '- Practicing a relaxing pre-bed routine to make it easier to fall asleep quickly.',br(),
+               '- Choosing the best mattress that is supportive and comfortable, and outfitting it with the best
+               pillows and bedding.',br(),
+               '- Minimizing potential disruptions from light and sound while optimizing your bedroom temperature and aroma.',br(),
+               '- Disconnecting from electronic devices like mobile phones and laptops for a half-hour or more before bed.',br(),
+               '- Carefully monitoring your intake of caffeine and alcohol and trying to avoid consuming them in the hours before bed.',
+
+               style = stylePanel)
+        )
       )
     ),
-    tabPanel(h5('Sleep hours according to WHO')
-       ,
+    tabPanel(
+      ('Sleep hours according to WHO'),
          fluidRow(
            column(
+             h3(strong('Recommended Sleep Times By Age Group')),
+             p('Scientific research makes clear that sleep is essential at any age. Sleep powers the mind, restores
+             the body, and fortifies virtually every system in the body. But how much sleep do we really need in
+             order to get these benefits?',br(),
+             'Recommended sleep times are broken down into nine age groups. In each group, the guidelines
+             present a recommended range of nightly sleep duration for healthy individuals. In some cases,
+             sleeping an hour more or less than the general range may be acceptable based on a person’s circumstances.',
+               style = stylePanel),
+             h3(strong('Sleeping table ')),
              p('Here you can see if you\'re sleeping well, according to WHO ( World Health Organization ).
-             The ideal time can change based on your age'
+             The ideal time can change based on your age:'
                , style = stylePanel),
              width = 9
            )
@@ -246,7 +302,7 @@ sleepFunction <- function (){
                       wellPanel(
                          h3(strong('Filter:')),
                          selectInput('sleep_select_age_who', 'Select your age:',
-                                     choices = c('All', sleep_table[['Ages']])                          )
+                                     choices = c('All', sleep_table[['Ages']]))
                       ),
                       wellPanel(
                          h4(strong('Downloads: ')),
@@ -255,7 +311,11 @@ sleepFunction <- function (){
                   ),
                column(9,
                       h3(strong('Sleep table according to World Health Organization: ')),
-                      dataTableOutput('sleep_table_who')
+                      p('Recommended sleep times are broken down into nine age groups.
+                      In each group, the guidelines present a recommended range of nightly sleep
+                      duration for healthy individuals. In some cases, sleeping an hour more or
+                      less than the general range may be acceptable based on a person’s circumstances.'),
+                      withSpinner(dataTableOutput('sleep_table_who'), type = 6, color = '#0000ff')
                )
              )
     )

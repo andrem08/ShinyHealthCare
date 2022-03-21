@@ -4,27 +4,30 @@ source('RFunctions/SleepScheduleFunction.R')
 source('RFunctions/Heartbeat.R')
 
 library('writexl')
+server <- function (input, output, session){
 
-function (input, output, session){
+  options(warn=-1)
 
   user_nutritional_food <- reactive({
     nutritional_DF [[which(nutritional_DF[[1]] == input$select_nutritional_food) + 1]]
   })
 
   output$myImage <- renderImage({
-    list(src = 'RFunctions/www/Shiny_Health_Care_Image.png', width = '700px', height = '700px', style="display: block; margin-left: auto; margin-right: auto;")
+    list(src = 'RFunctions/www/Shiny_Health_Care_Image.png', width = '600px', height = '600px', style="display: block; margin-left: auto; margin-right: auto;")
   }, deleteFile = FALSE)
 
+  observeEvent(input$heart_pa_file, correctHeartPAFile(input, output))
   observeEvent(input$sleep_button_file, observeSleepButton(input, output, session))
 
   observeEvent(input$sleep_button_add, addHour(input, output, session))
   observeEvent(input$sleep_button_remove, removeHour(input, output, session))
-  observeEvent(input$create_sleep_file, newFile(input, output, session))
+  observeEvent(input$create_sleep_file, newSleepFile(input, output, session))
 
-  observeEvent(input$sleep_file, correctFile(input, output ))
+  observeEvent(input$sleep_file, correctSleepFile(input, output))
   #Observe if you select a vitamin
   observeEvent(input$select_vit, observeSelectizeVit(input, output, session))
 
+  bmiTableStart(input, output, session)
   observeEvent(input$BMI_button, bmiFunction(input, output, session))
 
   output$nutritional_food_table <- renderDataTable(user_nutritional_food())
@@ -32,6 +35,11 @@ function (input, output, session){
   observeEvent(input$sleep_select_age_who, observeSelectSleepWho(input, output, session))
 
   observeEvent(input$heart_rate_numeric_button, calculateHeartFrequency(input, output, session))
+
+
+  observeEvent(input$heart_pa_button_file, heartPACalculation(input, output, session))
+
+  displayVisPlot()
 
   #Download statistics
   downloadFilesPdf <- function (path){
@@ -74,6 +82,18 @@ function (input, output, session){
     filename = function() { paste('heart_rate', sep = '.', 'pdf')},
     downloadFilesPdf('heart_rate.rmd'))
 
+  output$heart_pa_download_pdf <- downloadHandler(
+    filename = "heart_rate_plot.html",
+    content = function(file) {
+      tempReport <- file.path(tempdir(), "heartbeat_plot.rmd")
+      file.copy("heartbeat_plot.rmd", tempReport, overwrite = TRUE)
+
+      params <- list(n = input$slider)
+      out <- render(tempReport, output_file = file, params = params,
+        envir = new.env(parent = globalenv())
+      )
+    }
+  )
   output$download_bmi <- downloadHandler(
     filename = function() { paste('bmi_statistics', sep = '.', 'pdf')},
     downloadFilesPdf('bmi_statistics.rmd'))

@@ -3,7 +3,7 @@ bmiInterface <- function (){
      ('Calculate your BMI'), icon = icon('weight'),
        fluidRow(
          column(
-           p(strong(h3('BMI calculator:'))),
+           p(strong(h3('BMI calculator'))),
            p('Body mass index (BMI) is a value derived from the mass (weight) and height of a person.
            The BMI is defined as the body mass divided by the square of the body height, and is expressed
            in units of kg/m2, resulting from mass in kilograms and height in metres.',
@@ -14,7 +14,7 @@ bmiInterface <- function (){
              'Now for calculate your BMI you\'ll need to insert your height and your weight. You can chose the metric system you\'re going to use: ',
              br(),
              style = stylePanel),
-           width = 9
+           width = 11
          )
        ),
      fluidRow(
@@ -44,12 +44,11 @@ bmiInterface <- function (){
                ),
        ),
        column(4,
-              wellPanel(
-                uiOutput('BMI_results')
-              )
+              withSpinner(dataTableOutput('BMI_table'), type = 6, color = '#0000ff')
        ),
        column(4,
-              dataTableOutput('BMI_table')
+              h3(strong('BMI: ')),
+              uiOutput('BMI_results')
        )
      )
   )
@@ -60,7 +59,9 @@ bmi_table <<- data.frame(
   classification = c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
 )
 bmi_text <<- NULL
-
+bmiTableStart <- function (input, output, session){
+      output$BMI_table <- DT::renderDataTable(bmi_table)
+}
 bmiFunction <- function (input, output, session){
   #Primeiro transformar a altura em metros
   height <- switch(
@@ -93,7 +94,7 @@ bmiFunction <- function (input, output, session){
     results <- case_when(
         bmi < 16 ~ 'Indicating you are very underweight for adults of your height.
         Weighing too little can contribute to a weakened immune system,
-        fragile bones and feeling tired.Talk with your healthcare
+        fragile bones and feeling tired. Talk with your healthcare
         provider to determine an appropriate diet.',
 
         bmi >= 16 & bmi < 17 ~ 'Indicating you are underweight for adults of your height.
@@ -106,31 +107,33 @@ bmiFunction <- function (input, output, session){
 
         bmi >= 18.5 & bmi < 25 ~ 'Indicating your weight is normal for adults of your height.
          Maintaining a healthy weight may reduce the risk of chronic diseases associated with
-        overweight and obesity.',
+         overweight and obesity.',
 
         bmi >= 25 & bmi < 30 ~ 'You are a little overweight for adults of your height.
         Consuming fewer calories, making healthy food choices, exercising
-        more and controlling your weight can help reduce body mass.',
+         more and controlling your weight can help reduce body mass.',
 
         bmi >= 30 & bmi < 35 ~ 'You are overweight for adults of your height.
         Consuming fewer calories, making healthy food choices, exercising
-        more and controlling your weight can help reduce body mass.',
+         more and controlling your weight can help reduce body mass.',
 
-        bmi >= 35 & bmi < 40 ~ 'You are obese for adults of your height,
-        Class II obesity can be very harmful to health.
+        bmi >= 35 & bmi < 40 ~ 'You are obese for adults of your height.
+        Class II obesity can be very harmful to your health.
         Try to avoid gaining additional weight. Talk with your healthcare
-        provider to determine appropriate ways to lose weight.',
+         provider to determine appropriate ways to lose weight.',
 
-        bmi >= 40 ~ 'You are morbid obese for adults of your height.
+        bmi >= 40 ~ 'You are morbidly obese for adults of your height.
         Class III obesity can contribute to the development of several
-        serious health conditions, such as Type 2 diabetes and heart disease.
+         serious health conditions, such as Type 2 diabetes and heart disease.
         The good news is that class III obesity is manageable and treatable.
         Talk with your healthcare provider to determine appropriate ways to lose weight.'
       )
     output$BMI_results <- renderUI({
+      wellPanel(
       tagList(
         uiOutput('BMI_results_text1'),
         uiOutput('BMI_results_text2')
+      )
       )
     })
     bmi_text <<- c(toString(bmi), results)

@@ -9,15 +9,20 @@ library(shinyWidgets)
 library(shinyBS)
 library(knitr)
 library(elliptic)
+library(rmarkdown)
+
 
 #Opçõa de codificação
 options(encoding = 'UTF-8')
 options(warn=-1)
+rm(list = ls())
 
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx
 month_table <<- NULL
+heart_pa_table <<- NULL
 sleep_data_statistics <<- NULL
+heart_plot <<- NULL
 
 #Estilos e peronalizações
 table_opt <<- list(

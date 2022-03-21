@@ -119,14 +119,14 @@ vitaminsInterface <- function (){
   tabPanel(
     ('Vitamins'),
     fluidRow(
-      column(12,
+      column(11,
              p(h3(strong('Vitamins'))),
-             p('Vitamins, together with minerals are considered essential nutrients—because acting in concert, they perform hundreds
-             of roles in the body. They help shore up bones, heal wounds, and bolster your immune system. They also convert food
-             into energy, and repair cellular damage.', style = stylePanel), br(),
-             p('\nHere you can find a detailed table of the most important vitamins. The table shows the name of the vitamin,
+             p('Vitamins, together with minerals, are considered essential nutrients—because acting in concert, they perform hundreds
+              of roles in the body. They help shore up bones, heal wounds, and bolster your immune system. They also convert food
+              into energy and repair cellular damage.', style = stylePanel), br(),
+             p('Here you can find a detailed table of the most important vitamins. The table shows the name of the vitamin,
              where you can find it, your effectiveness in the human body, the problems with the lack of it, overdosing and others.
-             There\'s also the daily dose needed for an avarage adult.'
+             There\'s also the daily dose needed for an average adult.'
                , style = stylePanel)
       )
     ),
@@ -144,19 +144,20 @@ vitaminsInterface <- function (){
              )
       ),
       column(9,
-             dataTableOutput('table_vit')
+             shinycssloaders::withSpinner(dataTableOutput('table_vit'), type = 6, color = '#0000ff')
       )
     )
   ),
     tabPanel(
       title = 'Nutritional Table',
       fluidRow(
-        column(10,
+        column(11,
+             p(h3(strong('Nutritional Table'))),
                p('The tables below include tabular lists for selected basic foods, compiled from United States Dept.
                of Agriculture (USDA) sources. Included for each food is its weight in grams, its calories, and
                (also in grams,) the amount of protein, carbohydrates, dietary fiber, fat, and saturated fat.',br(),'
                As foods vary by brands and stores, the figures should only be considered estimates, with more exact
-               figures often included on product labels. ', br(),br(),'For precise details about vitamins and mineral contents, the USDA
+                figures often included on product labels. ', br(),br(),'For precise details about vitamins and mineral contents, the USDA
                source can be used.',
                  style = stylePanel)
         ),
@@ -173,7 +174,7 @@ vitaminsInterface <- function (){
                ),
         ),
         column(9,
-               dataTableOutput('nutritional_food_table')
+               shinycssloaders::withSpinner(dataTableOutput('nutritional_food_table'), type = 6, color = '#0000ff')
         )
       )
     )
