@@ -7,6 +7,8 @@ source('RFunctions/Heartbeat.R')
 source('RFunctions/MoreHealthInfo.R')
 source('RFunctions/GetReddit.R')
 
+source('RFunctions/GetGTrands.R')
+
 
 ui <<- fluidPage(
   theme = shinytheme('flatly'),
@@ -23,9 +25,11 @@ ui <<- fluidPage(
              navbarMenu(
                title = 'More information',
                healthInformationInterface(),
-               getRedditInterface()
+               getRedditInterface(),
+               get_gtrands()
              ),
              #Informaçoes e ajuda
              howToUse(),
+             # tabPanel(title = "Quit", value = 'stop', icon = icon("circle"))
           )
 )

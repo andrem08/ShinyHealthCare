@@ -5,6 +5,8 @@ source('RFunctions/Heartbeat.R')
 source('RFunctions/MoreHealthInfo.R')
 source('RFunctions/GetReddit.R')
 
+source('RFunctions/GetGTrands.R')
+
 server <- function (input, output, session){
 
   #Remove os warnings
@@ -49,170 +51,31 @@ server <- function (input, output, session){
   #Tabela do arq More Health Info
   output$health_info_table <- DT::renderDataTable(
     healthInfoTable[1],
-    selection = 'single',
+    selection = 'single'
   )
   observeEvent(input$health_info_table_rows_selected,mountData(input, output, session))
-  output$health_info_description <- renderUI(h3(strong('Click on one of those topics on the left table to know more about it')))
+  output$health_info_description <- renderUI(h4(strong('Click on one of those topics on the left table to know more about it')))
 
   #Sexto Painel parte dois
-    #Search using a username
-  observeEvent(input$user_name_reddit_button, {
+  #Search using a username
 
-    username <- tolower(gsub(' ', '', input$user_name_reddit))
-
-    tryCatch({
-      dt <- RedditExtractoR::get_user_content(username)[[1]]
-
-      output$reddit_description <- renderUI(tagList(
-        wellPanel(
-        tabsetPanel(type = 'tabs', id = 'tabset_sleep_reddit',
-          tabPanel('Description', uiOutput('description_reddit_usr')),
-          tabPanel('Comments',DT::dataTableOutput('comments_reddit')),
-          tabPanel('Threads',DT::dataTableOutput('threads_reddit'))
-        )
-      )))
-      output$description_reddit_usr <- renderUI(tagList(
-        uiOutput('description_name'),
-        lapply(seq(length(dt$about)), function(i) {
-          uiOutput(paste0('reddit_description', i))
-        })
-      ))
-      output$description_name <- renderUI(h3(strong('Informations: ')))
-      lapply(seq(length(dt$about)), function(i) {
-        output[[paste0('reddit_description', i)]] <- renderUI({
-          h4(colnames(as.data.frame(dt$about))[i], ': ', dt$about[i])
-        })
-      })
-      comments_dt <- data.frame(
-        title = dt$comments$thread_title,
-        subreddit = dt$comments$subreddit,
-        comment = dt$comments$comment,
-        date = dt$comments$date_utc
-      )
-      output$comments_reddit <- DT::renderDataTable(
-        comments_dt,
-        options = list(
-          pageLength = 5,
-          lengthMenu = c(5, 10, 15, 20, 50)
-        )
-      )
-      threads_dt <- data.frame(
-        title = dt$threads$title,
-        subreddit = dt$threads$subreddit,
-        date = dt$threads$date_utc
-      )
-      output$threads_reddit <- DT::renderDataTable(
-        threads_dt,
-        options = list(
-          pageLength = 5,
-          lengthMenu = c(5, 10, 15, 20, 50)
-        )
-      )
-    }, error = function (e) {
-      output$reddit_description <- renderUI(
-        tagList(
-          h3(strong('Error:')),
-          h4('No results found for the username: ',input$user_name_reddit)
-        )
-      )
-    }
-    )
-  })
+  observeEvent(input$user_name_reddit_button, getRedditUser(input, output, session))
+  #Observe the created table
 
   #Search using a keyword
-  observeEvent(input$find_subreddits_button, {
-
-    subreddits <- input$find_subreddits
-    tryCatch({
-      dt <- RedditExtractoR::find_subreddits(subreddits)
-
-      output$reddit_description <- renderUI(tagList(
-        wellPanel(
-          h3('Resuls for the keywors: ',input$find_subreddits_button),
-          DT::dataTableOutput('subreddits_table')
-        )
-      ))
-      subreddits_dt <- data.frame(
-        title = dt$title,
-        subreddit = dt$subreddit,
-        comment = dt$description,
-        comment = dt$subscribers,
-        date = dt$date_utc
-      )
-      output$subreddits_table <- DT::renderDataTable(
-        subreddits_dt,
-        options = list(
-          pageLength = 5,
-          lengthMenu = c(5, 10, 15, 20, 50)
-        )
-      )
-    }, error = function (e) {
-      output$reddit_description <- renderUI(
-        tagList(
-          h3(strong('Error:')),
-          h4('No results for the keywords: ', input$find_subreddits)
-        )
-      )
-    }
-    )
-  })
+  observeEvent(input$find_subreddits_button, findSubreddits(input, output, session))
 
   #Advanced search
-  observeEvent(input$advanced_search_button, {
-
-    keyword <- if( input$search_keyword_adv != 'None') input$search_keyword_adv else NA
-    subreddits <- if( input$search_subreddit_adv != 'None') input$search_subreddit_adv else NA
-    if ((is.na(keyword) & is.na(subreddits))){
-      output$reddit_description <- renderUI(
-        tagList(
-           h3(strong('Error:')),
-           h4('Error in one or more inputs.')
-        )
-      )
-      return()
-    }
-
-    sort <- input$sort_adv
-    period <- input$period_adv
-
-    tryCatch({
-      dt <- RedditExtractoR::find_thread_urls(keywords = keyword, sort_by = sort, subreddit = subreddits, period = period)
-
-      output$reddit_description <- renderUI(tagList(
-        wellPanel(
-          h3('Resuls for the inputs: ',input$find_subreddits_button),
-          DT::dataTableOutput('advanced_table')
-        )
-      ))
-      advanced_dt <- data.frame(
-        title = dt$title,
-        subreddit = dt$subreddit,
-        nComments = dt$comments,
-        text = dt$text,
-        date = dt$date_utc
-      )
-      output$advanced_table <- DT::renderDataTable(
-        advanced_dt,
-        options = list(
-          pageLength = 5,
-          lengthMenu = c(5, 10, 15, 20, 50)
-        )
-      )
-    }, error = function (e) {
-      output$reddit_description <- renderUI(
-        tagList(
-          h3(strong('Error:')),
-          h4('Error in one or more inputs.')
-        )
-      )
-    }
-    )
-  })
+  observeEvent(input$advanced_search_button, advancedSearch(input, output, session))
 
   #Descrição antes de calcular qualquer das funções do Reddit
   output$reddit_description <- renderUI(
-     h4('Search for any important information and the results will be
-     displayed here  '))
+     h4(strong('Search for any important information and the results will be
+     displayed here:  ')))
+
+  #Sexto painel parte tres
+  observeEvent(input$input_text_search_button, gtrands_plots(input, output, session))
+  output$output_gtrands <- renderUI(wellPanel(h4(strong('Enter the keyword on the right panel to show the statistics:'))))
 
   #Download statistics
   downloadFilesPdf <- function (path){
@@ -278,6 +141,12 @@ server <- function (input, output, session){
     filename = function() { "sleep_table.xlsx"},
     content = function(file) {write_xlsx(month_table, path = file)}
   )
+
+  #Quit button
+  # observe({
+  #   if (input$navbar == "stop")
+  #       stopApp()
+  # })
 }
 
 #END

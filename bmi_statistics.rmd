@@ -2,7 +2,7 @@
 
 ```{r, results = 'asis', echo=FALSE}
 if(!is.null(bmi_text)){
-  bmi_text[1]
+  print(bmi_text[1])
 }
 ```
 

@@ -80,7 +80,10 @@ howToUse <- function (){
                   h3(strong('5.2 Search on reddit')),
                   p('Here you can search on the reddit for additional information. You can search per user,
                    or a keyword, and at the end you have an advanced search.', style = stylePanel),br(),
-                )
+                h3(strong('5.3 Search statistics')),
+                p('Here you can search a keyword to show it\'s frequency, comparing to the date, and the conty
+                that it was used.', style = stylePanel)
+                ),br()
          )
       )
     ),
