@@ -35,6 +35,8 @@ welcome_page <<- function (){
         'In the second part of the third panel, you can see a table from the World Health Organization that shows the ideal
         time you need to sleep, according to your age.',br(),br(),
         'In the fourth panel you can check your blood pressure according to your age', br(),br(),
+        'In the fifth panel you can check more information. In the first part of the panel you can see the description of certain
+        health subjects, and in the second panel you can search on reddit about',
         'If you have any difficulty using any of the panels, see the manual on the last panel.'
         ,style= stylePanel ),
       width = 12,

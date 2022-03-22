@@ -10,6 +10,11 @@ library(shinyBS)
 library(knitr)
 library(elliptic)
 library(rmarkdown)
+library(stringr)
+library(ggvis)
+library(rvest)
+library(dplyr)
+library(writexl)
 
 
 #Opçõa de codificação
@@ -19,10 +24,12 @@ rm(list = ls())
 
 #Variaveis globais que recebem tabelas
 # e guardam os dados dos arquivos .xlsx
+healthInfoTable <<- NULL
 month_table <<- NULL
 heart_pa_table <<- NULL
 sleep_data_statistics <<- NULL
 heart_plot <<- NULL
+
 
 #Estilos e peronalizações
 table_opt <<- list(

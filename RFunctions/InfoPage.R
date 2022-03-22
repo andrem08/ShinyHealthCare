@@ -6,6 +6,7 @@ howToUse <- function (){
       title = ('How to use'),
       fluidRow(
          column(12,
+                #Summary
                 h2(strong('Manual on how to use the application.')),
                 wellPanel(
                   h4(strong('Index:')),
@@ -13,7 +14,9 @@ howToUse <- function (){
                   h4('2. Calculate your BMI'),
                   h4('3. Sleep data'),
                   h4('4. Heartbeat Frequency'),
+                  h4('5. More Information'),
 
+                  #Body Information
                   br(), br(), br(),
                   h2(strong('1. Nutritional Info: ')),
                   h3(strong('  1.1 Vitamins: ')),
@@ -66,7 +69,17 @@ howToUse <- function (){
                    and women. You can insert an exel table with 6 values containing your bpm
                    from every age. You need to write a column with your name and 6 values. In
                    case you don\'t have data for any of those intervals, just digit 0 in its place.',
-                  br(),'In the end, you can download the results and the table in a pdf file.')
+                  br(),'In the end, you can download the results and the table in a pdf file.',
+                    style = stylePanel),br(),
+
+                  h2(strong('5 More Information')),
+                  h3(strong('5.1 Extra Health Information')),
+                  p('Here you can select any of the topics of the table and it will give you an short
+                   description. You can also click on, read more to open the html link',
+                  style = stylePanel),br(),
+                  h3(strong('5.2 Search on reddit')),
+                  p('Here you can search on the reddit for additional information. You can search per user,
+                   or a keyword, and at the end you have an advanced search.', style = stylePanel),br(),
                 )
          )
       )
@@ -78,21 +91,25 @@ howToUse <- function (){
           p(strong(h2('References: '))),
           wellPanel(
             p('1.1 Vitamins informations: ',a('https://jumk.de/bmi/vitamin-table.php',
-                                             href = 'https://jumk.de/bmi/vitamin-table.php'), br(),
+                                             href = 'https://jumk.de/bmi/vitamin-table.php', target="_blank"), br(),
             '1.2 Nutritional table informations: ', a('https://en.wikipedia.org/wiki/Table_of_food_nutrients',
-                                                     href = 'https://en.wikipedia.org/wiki/Table_of_food_nutrients'),br(),
+                                                     href = 'https://en.wikipedia.org/wiki/Table_of_food_nutrients', target="_blank"),br(),
             '2.1 About BMI: ', a('https://en.wikipedia.org/wiki/Body_mass_index',
-                                 href = 'https://en.wikipedia.org/wiki/Body_mass_index'),br(),
+                                 href = 'https://en.wikipedia.org/wiki/Body_mass_index', target="_blank"),br(),
             '2.2 BMI table: ', a('https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html',
-                                 href = 'https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html'),br(),
+                                 href = 'https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html', target="_blank"),br(),
             '3.1 Sleep table: ', a('https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html',
-                                  href = 'https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html'),br(),
+                                  href = 'https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html', target="_blank"),br(),
             '3.2 Importance of sleep: ', a('https://www.sleepfoundation.org/how-sleep-works/why-do-we-need-sleep',
-                                           href = 'https://www.sleepfoundation.org/how-sleep-works/why-do-we-need-sleep'),br(),
+                                           href = 'https://www.sleepfoundation.org/how-sleep-works/why-do-we-need-sleep', target="_blank"),br(),
             '3.3 How much sleep do we really need: ', a('https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need',
-                                                        href = 'https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need'), br(),
+                                                        href = 'https://www.sleepfoundation.org/how-sleep-works/how-much-sleep-do-we-really-need', target="_blank"), br(),
             '4. Heart rate table: ', a('https://www.topendsports.com/testing/heart-rate-resting-chart.htm',
-                                      href = 'https://www.topendsports.com/testing/heart-rate-resting-chart.htm'),br(),
+                                      href = 'https://www.topendsports.com/testing/heart-rate-resting-chart.htm', target="_blank"),br(),
+            '5.1 More Health information: ', a('https://www.euro.who.int/en/health-topics',
+                                      href = 'https://www.euro.who.int/en/health-topics', target="_blank"),br(),
+            '5.2 Reddit: ', a('https://www.reddit.com/',
+                                      href = 'https://www.reddit.com/', target="_blank"),br(),
           style = stylePanel),
           ),
           width = 11

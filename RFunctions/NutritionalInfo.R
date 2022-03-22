@@ -1,7 +1,3 @@
-library(rvest)
-library(dplyr)
-library(rmarkdown)
-
 #Essa função vai pegar as tabelas do site jumk.de
 # e vai retornar uma data frame mais organizada
 getVit <- function (){
@@ -79,13 +75,21 @@ nutritional_DF <- getFoodNutrients()
 observeSelectizeVit <- function (input, output, session){
   if(input$select_vit == 'All'){
     output$table_vit <- renderDataTable(
-      DT::datatable(vit_DF)
+      DT::datatable(vit_DF,
+        options = list(
+          pageLength = 5,
+          lengthMenu = c(5, 10, 15, 20, 50)
+        ))
     )
   }
   else{
     output$table_vit <- renderDataTable(
       DT::datatable(
-        vit_DF [which( vit_DF$Name == input$select_vit ), ]
+        vit_DF [which( vit_DF$Name == input$select_vit ), ],
+        options = list(
+          pageLength = 5,
+          lengthMenu = c(5, 10, 15, 20, 50)
+        )
       )
     )
   }

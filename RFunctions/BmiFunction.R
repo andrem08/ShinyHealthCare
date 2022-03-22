@@ -1,7 +1,10 @@
+
+#Body mass index Interface.
 bmiInterface <- function (){
   tabPanel(
      ('Calculate your BMI'), icon = icon('weight'),
        fluidRow(
+         #Texto
          column(
            p(strong(h3('BMI calculator'))),
            p('Body mass index (BMI) is a value derived from the mass (weight) and height of a person.
@@ -20,8 +23,11 @@ bmiInterface <- function (){
      fluidRow(
        column(4,
               wellPanel(
+                # Botões do filter.
                  h3(strong('Filter: ')),
                  fluidRow(
+                   # NumericInput para inserir a altura
+                   # selectInput para selecionar o tipo
                    column(6,
                            numericInput('height_BMI', 'Insert your height: ', value = 0)
                    ),
@@ -30,22 +36,28 @@ bmiInterface <- function (){
                    )),
                  br(),
                  fluidRow(
+                   # NumericInput para inserir o peso
+                   # selectInput para selecionar o tipo
                    column(5,
                           numericInput('weight_BMI', 'Insert your weight:', value = 0)
                    ),
                    column(5,
                           selectInput('type_weight_BMI', '', choices = c('Kilograms', 'Lbs')), br()
                    )),
+                # Realiza todos os cálculos dados os inputs
                  actionButton('BMI_button', 'Calculate your BMI')
               ),
+              # Botão de download em pd
               wellPanel(
                   h4(strong('Downloads: ')),
                   downloadButton('download_bmi', 'Download the table:')
                ),
        ),
+       # Tabela BMI
        column(4,
               withSpinner(dataTableOutput('BMI_table'), type = 6, color = '#0000ff')
        ),
+       # Texto com os resultados e estatisticas, em um output dinamico
        column(4,
               h3(strong('BMI: ')),
               uiOutput('BMI_results')
@@ -53,15 +65,24 @@ bmiInterface <- function (){
      )
   )
 }
-
+#Tabela bmi contendo os intervalos e classificações
+# Decidi não retirar da web expecificamente do BMI. No caso nao teria nenhuma diferença
 bmi_table <<- data.frame(
   bmi = c('Less than 16', '16 - 17', '17 - 18.5', '18.5 - 25', '25 - 30', '30 - 35', '35 - 40', 'More than 40'),
   classification = c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
 )
+# Resultados e estatísticas para outros usos
 bmi_text <<- NULL
+
+# função para mostrar a tabela BMI inicialmente para o usuário
 bmiTableStart <- function (input, output, session){
       output$BMI_table <- DT::renderDataTable(bmi_table)
 }
+
+# Cálculo das alturas dado os inputs pelo usuario.
+# Imprime os resultados na tela BMI dependendo
+# de seu BMI. Tabmém deixa selecionado na tabela a linha
+# classificatoria de seu BMI
 bmiFunction <- function (input, output, session){
   #Primeiro transformar a altura em metros
   height <- switch(
@@ -76,21 +97,22 @@ bmiFunction <- function (input, output, session){
     'Lbs' = input$weight_BMI * 0.453592,
     'Kilograms' = input$weight_BMI * 1
   )
+  # Para nao dar erro na divisão por 0
   if (height == 0)
     height <- 1
 
+  # Calculo do BMI
   bmi <- weight/(height*height)
   bmi <- trunc(bmi*10, digits = 2)
   bmi <- bmi/10
-  interval_bmi <- c('Less than 16', '16 - 17', '17 - 18.5', '18.5 - 25', '25 - 30', '30 - 35', '35 - 40', 'More than 40')
-  labs_bmi <- c('Severe Thinness', 'Moderate Thinness', 'Mild Thinness', 'Normal', 'Overweight', 'Obese Class I', 'Obese Class II', 'Obese Class III')
-  bmi_table <<- data.frame(bmi = interval_bmi, classification = labs_bmi)
+
   if(weight <= 0 || height <= 0){
     output$BMI_results <- renderUI({p(h3('Error, wrong inputs.'))})
 
     output$BMI_table <- DT::renderDataTable(bmi_table)
   }
   else{
+    # Cada caso de bmi, resulta em uma frase única
     results <- case_when(
         bmi < 16 ~ 'Indicating you are very underweight for adults of your height.
         Weighing too little can contribute to a weakened immune system,
@@ -128,6 +150,8 @@ bmiFunction <- function (input, output, session){
         The good news is that class III obesity is manageable and treatable.
         Talk with your healthcare provider to determine appropriate ways to lose weight.'
       )
+
+    #Mostra os resultados em texto
     output$BMI_results <- renderUI({
       wellPanel(
       tagList(
@@ -140,6 +164,7 @@ bmiFunction <- function (input, output, session){
     output$BMI_results_text1 <- renderUI({p(h3('Your BMI is:', bmi))})
     output$BMI_results_text2 <- renderUI({p(results)})
 
+    #Seleciona a classificação na sua tabela
     output$BMI_table <- DT::renderDataTable(
       bmi_table,
       selection = list(selected = case_when(
@@ -155,3 +180,5 @@ bmiFunction <- function (input, output, session){
   )
   }
 }
+
+# END

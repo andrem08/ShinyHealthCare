@@ -4,6 +4,8 @@ source('RFunctions/NutritionalInfo.R')
 source('RFunctions/BmiFunction.R')
 source('RFunctions/SleepScheduleFunction.R')
 source('RFunctions/Heartbeat.R')
+source('RFunctions/MoreHealthInfo.R')
+source('RFunctions/GetReddit.R')
 
 
 ui <<- fluidPage(
@@ -11,13 +13,18 @@ ui <<- fluidPage(
   setBackgroundColor(
   ),
 
-  navbarPage(('MyShinyStatistics'),
+  navbarPage((''),
              #Apresentação do aplicativo, as estatísticas e sobre o autor
              welcome_page(),
              vitaminsInterface(),
              bmiInterface(),
              sleepFunction(),
              heartbeatInterface(),
+             navbarMenu(
+               title = 'More information',
+               healthInformationInterface(),
+               getRedditInterface()
+             ),
              #Informaçoes e ajuda
              howToUse(),
           )

@@ -1,6 +1,10 @@
-library(stringr)
-library(ggvis)
+#Pega a tabela do site abaixo e uma descrição também
+#Divide a tabela no meio, em feminino e masculino
+#Retorna um objeto com a descrição, os titulos e as duas
+#tabelas
+
 getHeartRateTable <- function (){
+  #Site
   link <- 'https://www.topendsports.com/testing/heart-rate-resting-chart.htm'
   link <- url(link, open = 'rb')
   page <- read_html(link)
@@ -13,15 +17,20 @@ getHeartRateTable <- function (){
   table <- data.frame(table)
   titles <- c(table[[1]][1],table[[9]][1])
 
+  #Remove caracteres indesejados
+  #Define os nomes das linhas
   table <- table[-1, ]
   rownames(table) <- table[[1]] %>%
   str_replace_all('\n', ' ')
 
   table <- table[-c(1, 8)]
 
+  #Divide a tabela inicial em male_table e female_table
   male_table <- table [][1:6]
   female_table <- table [][7:12]
 
+  #Define os nomes, remove linhas e colunas indesejadas
+  # e transpoe a tabela
   colnames(male_table) <- male_table[1,]
   colnames(female_table) <- female_table[1,]
   male_table <- male_table[-1,]
@@ -33,10 +42,15 @@ getHeartRateTable <- function (){
   tables <- list(titles, description, male_table, female_table)
   return(tables)
 }
-
+# Variavel onde a tabela vai ficar. Já vai ser
+# iniciada
 heart_tables <- getHeartRateTable()
 
+# Identifica o genero selecionado, e o intervalo de idades.
+# Verifica a classificação do usuario.
 calculateHeartFrequency <- function (input, output, session){
+
+  #Identifica a seleção de genero do usuario
   if(input$heart_rate_gender == 'Male'){
     table <- heart_tables[[3]]
     title <- heart_tables[1][[1]][1]
@@ -44,11 +58,14 @@ calculateHeartFrequency <- function (input, output, session){
     table <- heart_tables[[4]]
     title <- heart_tables[1][[1]][2]
   }
+  #Caso o usuario insira uma idade abaixo de 18.
   if (input$heart_rate_age < 18){
     return()
   }
   colnames(table) <- colnames(table) %>%
     str_replace_all('\\.', ' ')
+
+  # Verifica a faixa etaria do usuário
   index <- case_when(
     input$heart_rate_age <= 25 ~ 1,
     25 < input$heart_rate_age & input$heart_rate_age <= 35 ~ 2,
@@ -57,17 +74,18 @@ calculateHeartFrequency <- function (input, output, session){
     55 < input$heart_rate_age & input$heart_rate_age <= 65 ~ 5,
     65 < input$heart_rate_age  ~ 6
   )
-
+  # Deixa a frequencia em número, removendo os chars
   freq <- do.call(paste, c(table[index, ], sep = "-")) %>%
   str_replace_all('-', ' ') %>%
   str_remove('\\+') %>%
   str_split(' ')
-
   freq <- as.numeric(freq[[1]])
 
+  #Caso a sua frequencia for menor do que a esperada
   if(input$heart_rate_numeric < freq[1])
     return()
 
+  # renderiza a tabela com spinner
   output$heart_table_graph <- renderUI(
     tagList(
       wellPanel(
@@ -75,12 +93,14 @@ calculateHeartFrequency <- function (input, output, session){
         withSpinner(DTOutput('heart_table_1'), type = 6, color = '#0000ff')
     ))
   )
+
   output$heart_table_title <- renderUI(p(h3(strong(title, ':'))))
   output$heart_table_1 <- DT::renderDataTable(
     table,
     selection = list(selected = index, target = 'row')
   )
   category <- NULL
+  #Seleciona a categoria que o usuario está para impressão
   for (i in seq(ncol(table) - 1)){
     if(freq[2 * (i - 1) + 1] <= input$heart_rate_numeric & input$heart_rate_numeric <= freq[2 * (i - 1) + 2]){
       category <- colnames(table)[i]
@@ -89,20 +109,29 @@ calculateHeartFrequency <- function (input, output, session){
   }
   if (is.null(category))
     category <- colnames(table)[6]
-    output$heart_summary <- renderUI(
-      tagList(
-        wellPanel(
-          uiOutput('heart_statistics_1'),
-          uiOutput('heart_statistics_3')
-        )
+
+  output$heart_summary <- renderUI(
+    tagList(
+      wellPanel(
+        uiOutput('heart_statistics_1'),
+        uiOutput('heart_statistics_3')
       )
     )
+  )
   output$heart_statistics_1 <- renderUI (p(h3('Your category is: ', strong(category))))
   output$heart_statistics_3 <- renderUI (p(br(), h4(heart_tables[[2]])))
 }
 
+# Faz a tabela para a segunda parte do Heartbeat
+# Contem um nivel da tabela masculina e da tabela feminina
 getHeartPATable <- function (){
-  male <- do.call(paste, c(heart_tables[[3]][5,], sep = "-")) %>%
+
+  # 4 é above average
+  # 5 é average
+  desireRow <- 5
+
+  #Tabela masculina
+  male <- do.call(paste, c(heart_tables[[3]][desireRow,], sep = "-")) %>%
   str_replace_all('-', ' ') %>%
   str_remove('\\+') %>%
   str_split(' ')
@@ -114,7 +143,8 @@ getHeartPATable <- function (){
   }
   male <- aux
 
-  female <- do.call(paste, c(heart_tables[[4]][5,], sep = "-")) %>%
+  # Tabela feminina
+  female <- do.call(paste, c(heart_tables[[4]][desireRow,], sep = "-")) %>%
   str_replace_all('-', ' ') %>%
   str_remove('\\+') %>%
   str_split(' ')
@@ -126,11 +156,14 @@ getHeartPATable <- function (){
   }
   female <- aux
 
+
+  # Deixa elas na var global heart_pa_table
   heart_pa_table <- data.frame(male = male, female = female)
   rownames(heart_pa_table) <- rownames(heart_tables[[3]])
   heart_pa_table <<- heart_pa_table
 }
 
+#Verifica se o arq excel foi inserido corretamente
 correctHeartPAFile <- function(input, output){
   if(is.null(input$heart_pa_file) || nrow(read.xlsx(input$heart_pa_file$datapath)) != 6){
     output$user_heart_pa_summary <- renderUI({
@@ -158,6 +191,8 @@ correctHeartPAFile <- function(input, output){
   }
 }
 
+# Mostra o grafico interativo inicialmente, antes do usuario
+# inserir a tabela dele
 displayVisPlot <- function (){
   getHeartPATable()
 
@@ -203,6 +238,8 @@ displayVisPlot <- function (){
 
   bind_shiny(vis2, 'user_heart_pa_graph')
 }
+
+# Mostra o grafico interativo após o usuario inserir a tabela dele
 heartPACalculation <- function (input, output, session){
 
   if(!is.data.frame(heart_pa_table)) {
@@ -271,6 +308,7 @@ heartPACalculation <- function (input, output, session){
   
 }
 
+# Interface do heartbeat
 heartbeatInterface <- function (){
   navbarMenu(
     title = 'Heart rates',
@@ -366,3 +404,5 @@ heartbeatInterface <- function (){
     )
   )
 }
+
+# END
