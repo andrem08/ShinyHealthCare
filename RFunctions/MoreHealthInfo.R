@@ -27,7 +27,7 @@ getHealthInformations <- function (){
 
   return(url_table)
 }
-healthInfoTable <<- getHealthInformations()
+# healthInfoTable <<- getHealthInformations()
 
 mountData <- function (input, output, session){
     selected_row <- input$health_info_table_rows_selected

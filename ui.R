@@ -2,7 +2,7 @@ source('RFunctions/HomePage.R')
 source('RFunctions/InfoPage.R')
 source('RFunctions/NutritionalInfo.R')
 source('RFunctions/BmiFunction.R')
-source('RFunctions/SleepScheduleFunction.R')
+# source('RFunctions/SleepScheduleFunction.R')
 source('RFunctions/Heartbeat.R')
 source('RFunctions/MoreHealthInfo.R')
 source('RFunctions/GetReddit.R')
@@ -20,7 +20,7 @@ ui <<- fluidPage(
              welcome_page(),
              vitaminsInterface(),
              bmiInterface(),
-             sleepFunction(),
+             # sleepFunction(),
              heartbeatInterface(),
              navbarMenu(
                title = 'More information',

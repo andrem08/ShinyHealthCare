@@ -1,6 +1,6 @@
 source('RFunctions/NutritionalInfo.R')
 source('RFunctions/BmiFunction.R')
-source('RFunctions/SleepScheduleFunction.R')
+# source('RFunctions/SleepScheduleFunction.R')
 source('RFunctions/Heartbeat.R')
 source('RFunctions/MoreHealthInfo.R')
 source('RFunctions/GetReddit.R')
